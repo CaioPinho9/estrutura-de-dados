@@ -1,3 +1,0 @@
-C:/Users/caiop/Documents/projects/ufsc/estrutura_de_dados/ordenar_vetor/cmake-build-debug/CMakeFiles/ordenar_vetor.dir
-C:/Users/caiop/Documents/projects/ufsc/estrutura_de_dados/ordenar_vetor/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/caiop/Documents/projects/ufsc/estrutura_de_dados/ordenar_vetor/cmake-build-debug/CMakeFiles/rebuild_cache.dir
