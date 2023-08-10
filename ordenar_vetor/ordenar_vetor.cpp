@@ -5,9 +5,9 @@
 #include <vector>
 #include <iostream>
 
-bool is_sorted(std::vector<int> v) {
+bool is_sorted(std::vector<int>& v) {
     for (unsigned int i = 0; i < v.size() - 1; i++) {
-        if (v[i] > v[i + 1])
+        if (&v[i] > &v[i + 1])
             return false;
     }
     return true;
