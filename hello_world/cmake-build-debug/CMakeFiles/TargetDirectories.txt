@@ -1,0 +1,3 @@
+C:/Users/caiop/Documents/projects/ufsc/estrutura_de_dados/hello_world/cmake-build-debug/CMakeFiles/hello_world.dir
+C:/Users/caiop/Documents/projects/ufsc/estrutura_de_dados/hello_world/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/caiop/Documents/projects/ufsc/estrutura_de_dados/hello_world/cmake-build-debug/CMakeFiles/rebuild_cache.dir
