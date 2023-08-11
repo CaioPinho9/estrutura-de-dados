@@ -5,9 +5,13 @@
 # include <vector>
 # include <iostream>
 
-void print(std::vector<int> &v) {
+void print(const char *str) {
+    std::cout << str << '\n';
+}
+
+void print_vector(std::vector<int> &v) {
     for (auto x: v) {
-        std::cout << x << '\n';
+        std::cout << x << ',';
     }
     std::cout << '\n';
 

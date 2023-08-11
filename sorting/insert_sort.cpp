@@ -22,11 +22,11 @@ void insert_sort(std::vector<int> &v) {
 int main() {
     std::vector<int> v = generate_random_vector(6);
 
-    print(v);
+    print_vector(v);
 
     insert_sort(v);
 
-    print(v);
+    print_vector(v);
 
     return 0;
 }
