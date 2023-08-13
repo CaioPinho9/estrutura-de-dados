@@ -20,13 +20,11 @@ void insert_sort(std::vector<int> &v) {
 
 
 int main() {
-    std::vector<int> v = generate_random_vector(6);
+    unsigned int size = 50000;
+    std::cout << "Tamanho: " << size << '\n';
 
-    print_vector(v);
-
-    insert_sort(v);
-
-    print_vector(v);
+    std::cout << "Insert Sort:\n";
+    calculate_sorting_function_time(insert_sort, size, false);
 
     return 0;
 }
