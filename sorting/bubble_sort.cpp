@@ -3,9 +3,8 @@
 //
 #include <vector>
 #include "utils.cpp"
-#include "print.cpp"
 
-void bubble_sort_while(std::vector<int> &v) {
+void bubbleSortWhile(std::vector<int> &v) {
     unsigned int n = v.size();
     bool mudou;
     do {
@@ -21,7 +20,7 @@ void bubble_sort_while(std::vector<int> &v) {
     } while (mudou);
 }
 
-void bubble_sort_for(std::vector<int> &v) {
+void bubbleSortFor(std::vector<int> &v) {
     unsigned int n = v.size();
     for (int j = 0; j < n; ++j) {
         for (int i = 1; i < n; ++i) {
@@ -34,7 +33,7 @@ void bubble_sort_for(std::vector<int> &v) {
     }
 }
 
-void bubble_sort_optimized1(std::vector<int> &v) {
+void bubbleSortOptimized1(std::vector<int> &v) {
     unsigned int n = v.size();
     for (int j = 0; j < n; ++j) {
         for (int i = 1; i < n - j; ++i) {
@@ -47,7 +46,7 @@ void bubble_sort_optimized1(std::vector<int> &v) {
     }
 }
 
-void bubble_sort_optimized2(std::vector<int> &v) {
+void bubbleSortOptimized2(std::vector<int> &v) {
     unsigned int n, j, i, pos_ult_inv, lim_dir;
     n = v.size();
     lim_dir = n;
@@ -69,40 +68,40 @@ int main() {
 //    std::unsorted_vector<int> vector;
 //    unsigned int size = 100000;
 //    std::cout << "Bubble Sort using while" << '\n';
-//    vector = generate_random_vector(size);
-//    print_vector(vector);
-//    bubble_sort_while(vector);
-//    print_vector(vector);
+//    vector = generateRandomVector(size);
+//    printVector(vector);
+//    bubbleSortWhile(vector);
+//    printVector(vector);
 //
 //    std::cout << "Bubble Sort using for" << '\n';
-//    vector = generate_random_vector(size);
-//    print_vector(vector);
-//    bubble_sort_for(vector);
-//    print_vector(vector);
+//    vector = generateRandomVector(size);
+//    printVector(vector);
+//    bubbleSortFor(vector);
+//    printVector(vector);
 //
 //    std::cout << "Bubble Sort Optimizing 1" << '\n';
-//    vector = generate_random_vector(size);
-//    print_vector(vector);
-//    bubble_sort_optimized1(vector);
-//    print_vector(vector);
+//    vector = generateRandomVector(size);
+//    printVector(vector);
+//    bubbleSortOptimized1(vector);
+//    printVector(vector);
 //
 //    std::cout << "Bubble Sort Optimizing 2" << '\n';
-//    vector = generate_random_vector(size);
-//    print_vector(vector);
-//    bubble_sort_optimized2(vector);
-//    print_vector(vector);
+//    vector = generateRandomVector(size);
+//    printVector(vector);
+//    bubbleSortOptimized2(vector);
+//    printVector(vector);
 
     unsigned int size = 50000;
     std::cout << "Tamanho: " << size << '\n';
 
 //    std::cout << "Bubble Sort using while:\n";
-//    calculate_sorting_function_time(bubble_sort_while, unsorted_vector, false);
+//    calculateSortingFunctionTime(bubbleSortWhile, unsorted_vector, false);
 //    std::cout << "Bubble Sort using for:\n";
-//    calculate_sorting_function_time(bubble_sort_for, unsorted_vector, false);
+//    calculateSortingFunctionTime(bubbleSortFor, unsorted_vector, false);
     std::cout << "Bubble Sort Optimizing 1:\n";
-    calculate_sorting_function_time(bubble_sort_optimized1, size, false);
+    calculateSortingFunctionTime(bubbleSortOptimized1, size, false);
     std::cout << "Bubble Sort Optimizing 2:\n";
-    calculate_sorting_function_time(bubble_sort_optimized2, size, false);
+    calculateSortingFunctionTime(bubbleSortOptimized2, size, false);
 
     return 0;
 }

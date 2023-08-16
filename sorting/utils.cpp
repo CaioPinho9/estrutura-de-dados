@@ -6,7 +6,7 @@
 #include <iostream>
 #include <chrono>
 
-void print_vector(std::vector<int> &v) {
+void printVector(std::vector<int> &v) {
     unsigned int n = v.size();
     for (int i = 0; i < n; ++i) {
         auto item = v[i];
@@ -19,7 +19,7 @@ void print_vector(std::vector<int> &v) {
 
 }
 
-std::vector<int> generate_random_vector(unsigned int vector_size) {
+std::vector<int> generateRandomVector(unsigned int vector_size) {
     std::vector<int> vector = {};
     for (int i = 0; i < vector_size; ++i) {
         auto n = rand() % 1000;
@@ -28,7 +28,7 @@ std::vector<int> generate_random_vector(unsigned int vector_size) {
     return vector;
 }
 
-void knuth_shuffle(std::vector<int> &v) {
+void knuthShuffle(std::vector<int> &v) {
     srand(time(NULL)); // A different seed each time
     int n = v.size();
     for (int i = --n; i > 0; i--) {
@@ -42,28 +42,28 @@ void knuth_shuffle(std::vector<int> &v) {
     }
 }
 
-void calculate_sorting_function_time(
-        void (*sorting_function)(std::vector<int> &),
+void calculateSortingFunctionTime(
+        void (*sortingFunction)(std::vector<int> &),
         unsigned int size,
-        bool print_vectors
+        bool printVectors
 ) {
-    std::vector<int> vector = generate_random_vector(size);
-    if (print_vectors) print_vector(vector);
+    std::vector<int> vector = generateRandomVector(size);
+    if (printVectors) printVector(vector);
 
     auto start = std::chrono::system_clock::now();
-    sorting_function(vector);
+    sortingFunction(vector);
     auto end = std::chrono::system_clock::now();
 
     // Calculate the duration in milliseconds
-    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    if (duration_ms >= 1000) {
+    if (durationMs >= 1000) {
         // Convert duration to seconds if it's longer than one second
-        double duration_sec = static_cast<double>(duration_ms) / 1000.0;
+        double duration_sec = static_cast<double>(durationMs) / 1000.0;
         std::cout << duration_sec << "s\n\n";
     } else {
-        std::cout << duration_ms << "ms\n\n";
+        std::cout << durationMs << "ms\n\n";
     }
 
-    if (print_vectors) print_vector(vector);
+    if (printVectors) printVector(vector);
 }

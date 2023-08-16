@@ -4,7 +4,7 @@
 # include <vector>
 # include "utils.cpp"
 
-void insert_sort(std::vector<int> &v) {
+void insertSort(std::vector<int> &v) {
     unsigned int n = v.size();
     int j;
     for (auto i = 1; i < n; ++i) {
@@ -24,7 +24,7 @@ int main() {
     std::cout << "Tamanho: " << size << '\n';
 
     std::cout << "Insert Sort:\n";
-    calculate_sorting_function_time(insert_sort, size, false);
+    calculateSortingFunctionTime(insertSort, size, false);
 
     return 0;
 }
