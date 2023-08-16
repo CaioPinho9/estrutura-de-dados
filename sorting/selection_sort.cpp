@@ -7,25 +7,30 @@
 void selectionSort(std::vector<int> &v) {
     unsigned int n = v.size();
     for (int i = 0; i < n; ++i) {
-        unsigned int minumumValue = 0;
-        for (int j = 0; j < n - i; ++j) {
-
+        unsigned int index_min = 0;
+        for (int j = i; j < n; ++j) {
+            if (v[j] < v[index_min]) {
+                index_min = j;
+            }
         }
+        auto aux = v[i];
+        v[i] = v[index_min];
+        v[index_min] = aux;
     }
 }
 
 int main() {
     std::vector<int> vector;
-    unsigned int size = 100000;
-    std::cout << "Selection Sort using while" << '\n';
-    vector = generateRandomVector(size);
-    printVector(vector);
-    selectionSort(vector);
-    printVector(vector);
+    unsigned int size = 10000;
+//    std::cout << "Selection Sort using while" << '\n';
+//    vector = generateRandomVector(size);
+//    printVector(vector);
+//    selectionSort(vector);
+//    printVector(vector);
 
     std::cout << "Tamanho: " << size << '\n';
 
-    std::cout << "Bubble Sort using while:\n";
+    std::cout << "Selection Sort:\n";
     calculateSortingFunctionTime(selectionSort, size, false);
 
     return 0;
