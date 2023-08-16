@@ -2,7 +2,7 @@
 // Created by caiop on 11/08/2023.
 //
 #include <vector>
-#include "utils.cpp"
+//#include "utils.cpp"
 
 void bubbleSortWhile(std::vector<int> &v) {
     unsigned int n = v.size();
@@ -64,8 +64,8 @@ void bubbleSortOptimized2(std::vector<int> &v) {
     }
 }
 
-int main() {
-//    std::unsorted_vector<int> vector;
+//int main() {
+//    std::vector<int> vector;
 //    unsigned int size = 100000;
 //    std::cout << "Bubble Sort using while" << '\n';
 //    vector = generateRandomVector(size);
@@ -90,18 +90,19 @@ int main() {
 //    printVector(vector);
 //    bubbleSortOptimized2(vector);
 //    printVector(vector);
-
-    unsigned int size = 50000;
-    std::cout << "Tamanho: " << size << '\n';
-
+//
+//    unsigned int size = 50000;
+//    std::vector<int> vector = generateRandomVector(size);
+//    std::cout << "Tamanho: " << size << '\n';
+//
 //    std::cout << "Bubble Sort using while:\n";
 //    calculateSortingFunctionTime(bubbleSortWhile, unsorted_vector, false);
 //    std::cout << "Bubble Sort using for:\n";
 //    calculateSortingFunctionTime(bubbleSortFor, unsorted_vector, false);
-    std::cout << "Bubble Sort Optimizing 1:\n";
-    calculateSortingFunctionTime(bubbleSortOptimized1, size, false);
-    std::cout << "Bubble Sort Optimizing 2:\n";
-    calculateSortingFunctionTime(bubbleSortOptimized2, size, false);
-
-    return 0;
-}
+//    std::cout << "Bubble Sort Optimizing 1:\n";
+//    calculateSortingFunctionTime(bubbleSortOptimized1, vector, false);
+//    std::cout << "Bubble Sort Optimizing 2:\n";
+//    calculateSortingFunctionTime(bubbleSortOptimized2, vector, false);
+//
+//    return 0;
+//}

@@ -1,8 +1,8 @@
 //
 // Created by caiop on 11/08/2023.
 //
-# include <vector>
-# include "utils.cpp"
+#include <vector>
+//#include "utils.cpp"
 
 void insertSort(std::vector<int> &v) {
     unsigned int n = v.size();
@@ -19,12 +19,13 @@ void insertSort(std::vector<int> &v) {
 }
 
 
-int main() {
-    unsigned int size = 50000;
-    std::cout << "Tamanho: " << size << '\n';
-
-    std::cout << "Insert Sort:\n";
-    calculateSortingFunctionTime(insertSort, size, false);
-
-    return 0;
-}
+//int main() {
+//    unsigned int size = 50000;
+//    std::vector<int> vector = generateRandomVector(size);
+//    std::cout << "Tamanho: " << size << '\n';
+//
+//    std::cout << "Insert Sort:\n";
+//    calculateSortingFunctionTime(insertSort, vector, false);
+//
+//    return 0;
+//}

@@ -44,10 +44,9 @@ void knuthShuffle(std::vector<int> &v) {
 
 void calculateSortingFunctionTime(
         void (*sortingFunction)(std::vector<int> &),
-        unsigned int size,
+        std::vector<int> vector,
         bool printVectors
 ) {
-    std::vector<int> vector = generateRandomVector(size);
     if (printVectors) printVector(vector);
 
     auto start = std::chrono::system_clock::now();
