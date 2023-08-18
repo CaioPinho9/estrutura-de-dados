@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <limits>
 
 typedef struct Item {
     int tag = 0;
@@ -13,7 +14,7 @@ typedef struct Item {
     double valueByWeight = 0;
 } Item;
 
-std::vector<Item> read() {
+std::vector<Item> readItems() {
     std::vector<Item> listOfItems;
     int exit;
     int tag = 0;
@@ -29,6 +30,7 @@ std::vector<Item> read() {
         }
         listOfItems.push_back(item);
     }
+
     return listOfItems;
 }
 
@@ -55,38 +57,55 @@ typedef struct BackpackItem {
 void fillBackpack(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems, unsigned int backpackSize) {
     // Selection sort algorithm
     unsigned int backpackIndex = 0;
+    unsigned int smallestWeight = std::numeric_limits<int>::infinity();
 
     unsigned int n = listOfItems.size();
-    for (int i = 0; i < n - 1; ++i) {
+    for (int i = 0; i < n; ++i) {
         unsigned int indexMax = i;
         for (int j = i; j < n; ++j) {
-            if (listOfItems[j].valueByWeight > listOfItems[indexMax].valueByWeight) {
+            bool swap = (listOfItems[j].valueByWeight > listOfItems[indexMax].valueByWeight) ||
+                        (listOfItems[j].tag < listOfItems[indexMax].tag &&
+                         listOfItems[j].valueByWeight == listOfItems[indexMax].valueByWeight);
+
+            if (swap) {
                 indexMax = j;
+            }
+
+            if (smallestWeight > listOfItems[j].weight) {
+                smallestWeight = listOfItems[j].weight;
             }
         }
         auto bestItem = listOfItems[indexMax];
         listOfItems[indexMax] = listOfItems[i];
         listOfItems[i] = bestItem;
 
+        bool itemFitInside = false;
         while (backpackSize >= bestItem.weight and bestItem.numberOfItems > 0) {
             if (backpack.size() < backpackIndex + 1) {
                 backpack.emplace_back();
                 backpack[backpackIndex].itemType = bestItem.tag;
             }
             backpack[backpackIndex].quantity++;
+            backpackSize -= bestItem.weight;
             bestItem.numberOfItems--;
+            itemFitInside = true;
         }
-        backpackIndex++;
+        if (backpackSize < smallestWeight) {
+            return;
+        }
+        if (itemFitInside) {
+            backpackIndex++;
+        }
     }
 
 };
 
 int main() {
-    unsigned int backpackSize = 20;
+    unsigned int backpackSize;
     std::vector<BackpackItem> backpack;
     std::vector<Item> listOfItems;
-    listOfItems = read();
-
+    listOfItems = readItems();
+    std::cin >> backpackSize;
     fillBackpack(backpack, listOfItems, backpackSize);
 
     return 0;
