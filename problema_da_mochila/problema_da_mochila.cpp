@@ -39,7 +39,8 @@ typedef struct BackpackItem {
     int quantity = 0;
 } BackpackItem;
 
-void fillBackpack(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems, unsigned int backpackSize) {
+void fillBackpackSelectionSort(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems,
+                               unsigned int backpackSize) {
     // Selection sort algorithm
     unsigned int backpackIndex = -1;
     unsigned int smallestWeight = std::numeric_limits<int>::infinity();
@@ -80,8 +81,9 @@ void fillBackpack(std::vector<BackpackItem> &backpack, std::vector<Item> &listOf
             return;
         }
     }
-
 };
+
+//TODO: Implement with merge sort
 
 void printBackpack(std::vector<BackpackItem> &backpack) {
     for (auto item: backpack) {
@@ -98,7 +100,7 @@ int main() {
     unsigned int backpackSize;
     std::cin >> backpackSize;
 
-    fillBackpack(backpack, listOfItems, backpackSize);
+    fillBackpackSelectionSort(backpack, listOfItems, backpackSize);
 
     printBackpack(backpack);
 
