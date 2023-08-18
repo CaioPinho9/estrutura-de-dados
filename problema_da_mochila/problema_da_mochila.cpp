@@ -39,24 +39,9 @@ typedef struct BackpackItem {
     int quantity = 0;
 } BackpackItem;
 
-//void selectionSort(std::vector<int> &v) {
-//    unsigned int n = v.size();
-//    for (int i = 0; i < n - 1; ++i) {
-//        unsigned int index_min = i;
-//        for (int j = i; j < n; ++j) {
-//            if (v[j] < v[index_min]) {
-//                index_min = j;
-//            }
-//        }
-//        auto aux = v[i];
-//        v[i] = v[index_min];
-//        v[index_min] = aux;
-//    }
-//}
-
 void fillBackpack(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems, unsigned int backpackSize) {
     // Selection sort algorithm
-    unsigned int backpackIndex = 0;
+    unsigned int backpackIndex = -1;
     unsigned int smallestWeight = std::numeric_limits<int>::infinity();
 
     unsigned int n = listOfItems.size();
@@ -79,34 +64,43 @@ void fillBackpack(std::vector<BackpackItem> &backpack, std::vector<Item> &listOf
         listOfItems[indexMax] = listOfItems[i];
         listOfItems[i] = bestItem;
 
-        bool itemFitInside = false;
+        bool alreadyInBackpack = false;
         while (backpackSize >= bestItem.weight and bestItem.numberOfItems > 0) {
-            if (backpack.size() < backpackIndex + 1) {
+            if (not alreadyInBackpack) {
+                backpackIndex++;
                 backpack.emplace_back();
                 backpack[backpackIndex].itemType = bestItem.tag;
+                alreadyInBackpack = true;
             }
             backpack[backpackIndex].quantity++;
             backpackSize -= bestItem.weight;
             bestItem.numberOfItems--;
-            itemFitInside = true;
         }
         if (backpackSize < smallestWeight) {
             return;
-        }
-        if (itemFitInside) {
-            backpackIndex++;
         }
     }
 
 };
 
+void printBackpack(std::vector<BackpackItem> &backpack) {
+    for (auto item: backpack) {
+        std::cout << item.itemType << ' ' << item.quantity << '\n';
+    }
+}
+
 int main() {
-    unsigned int backpackSize;
     std::vector<BackpackItem> backpack;
     std::vector<Item> listOfItems;
+
     listOfItems = readItems();
+
+    unsigned int backpackSize;
     std::cin >> backpackSize;
+
     fillBackpack(backpack, listOfItems, backpackSize);
+
+    printBackpack(backpack);
 
     return 0;
 }
