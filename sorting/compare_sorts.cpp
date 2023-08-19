@@ -9,18 +9,18 @@
 #include "utils.cpp"
 
 int main() {
-    unsigned int size = 10;
+    unsigned int size = 50000;
     std::vector<int> vector = generateRandomVector(size);
     std::cout << "Tamanho: " << size << '\n';
 
-//    std::cout << "Insert Sort:\n";
-//    calculateSortingFunctionTime(insertSort, vector, false);
-//
-//    std::cout << "Bubble Sort:\n";
-//    calculateSortingFunctionTime(bubbleSortOptimized2, vector, false);
-//
-//    std::cout << "Selection Sort:\n";
-//    calculateSortingFunctionTime(selectionSort, vector, false);
+    std::cout << "Insert Sort:\n";
+    calculateSortingFunctionTime(insertSort, vector, false);
+
+    std::cout << "Bubble Sort:\n";
+    calculateSortingFunctionTime(bubbleSortOptimized2, vector, false);
+
+    std::cout << "Selection Sort:\n";
+    calculateSortingFunctionTime(selectionSort, vector, false);
 
     std::cout << "Merge Sort:\n";
     calculateSortingFunctionTime(mergeSort, vector, false);

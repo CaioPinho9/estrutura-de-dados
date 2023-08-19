@@ -5,8 +5,8 @@
 
 
 void merge(std::vector<int> &vector, int left, int mid, int right) {
-    int const leftVectorSize = mid - left + 1;
-    int const rightVectorSize = right - mid;
+    unsigned int const leftVectorSize = mid - left + 1;
+    unsigned int const rightVectorSize = right - mid;
 
     std::vector<int> leftVector(leftVectorSize, 0), rightVector(rightVectorSize, 0);
 
@@ -14,13 +14,35 @@ void merge(std::vector<int> &vector, int left, int mid, int right) {
         leftVector[i] = vector[left + i];
     }
     for (int i = 0; i < rightVectorSize; ++i) {
-        leftVector[i] = vector[mid + 1 + i];
+        rightVector[i] = vector[mid + 1 + i];
     }
 
-    int indexLeftVector = 0, indexRightVector = 0;
+    unsigned int indexLeftVector = 0, indexRightVector = 0;
     int indexMergedVector = left;
 
+    while (indexLeftVector < leftVectorSize and indexRightVector < rightVectorSize) {
+        if (leftVector[indexLeftVector] <= rightVector[indexRightVector]) {
+            vector[indexMergedVector] = leftVector[indexLeftVector];
+            indexLeftVector++;
+        }
+        if (rightVector[indexRightVector] < leftVector[indexLeftVector]) {
+            vector[indexMergedVector] = rightVector[indexRightVector];
+            indexRightVector++;
+        }
+        indexMergedVector++;
+    }
 
+    while (indexLeftVector < leftVectorSize) {
+        vector[indexMergedVector] = leftVector[indexLeftVector];
+        indexLeftVector++;
+        indexMergedVector++;
+    }
+
+    while (indexRightVector < rightVectorSize) {
+        vector[indexMergedVector] = rightVector[indexRightVector];
+        indexRightVector++;
+        indexMergedVector++;
+    }
 }
 
 void mergeSortRecursive(std::vector<int> &vector, int begin, int end) {
