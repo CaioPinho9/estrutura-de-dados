@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <cstdlib>
+#include <chrono>
 
 typedef struct Item {
     int tag = 0;
@@ -20,9 +22,12 @@ typedef struct BackpackItem {
     int quantity = 0;
 } BackpackItem;
 
-void
-putInBackpack(Item &item, std::vector<BackpackItem> &backpack, unsigned int &backpackSize, unsigned int &backpackIndex,
-              unsigned int smallestWeight) {
+void putInBackpack(
+        Item &item, std::vector<BackpackItem> &backpack,
+        unsigned int &backpackSize,
+        unsigned int &backpackIndex,
+        unsigned int smallestWeight
+) {
     bool alreadyInBackpack = false;
     while (backpackSize >= item.weight and item.numberOfItems > 0) {
         if (not alreadyInBackpack) {
@@ -40,8 +45,11 @@ putInBackpack(Item &item, std::vector<BackpackItem> &backpack, unsigned int &bac
     }
 }
 
-void fillBackpackSelectionSort(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems,
-                               unsigned int backpackSize) {
+void fillBackpackSelectionSort(
+        std::vector<BackpackItem> &backpack,
+        std::vector<Item> &listOfItems,
+        unsigned int backpackSize
+) {
     // Selection sort algorithm
     unsigned int backpackIndex = -1;
     unsigned int smallestWeight = std::numeric_limits<int>::infinity();
@@ -125,8 +133,11 @@ void mergeSort(std::vector<Item> &vector) {
     mergeSortRecursive(vector, 0, vectorSize);
 }
 
-void fillBackpackMergeSort(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems,
-                           unsigned int backpackSize) {
+void fillBackpackMergeSort(
+        std::vector<BackpackItem> &backpack,
+        std::vector<Item> &listOfItems,
+        unsigned int backpackSize
+) {
     unsigned int backpackIndex = -1;
     unsigned int smallestWeight = std::numeric_limits<int>::infinity();
 
@@ -172,18 +183,76 @@ void printBackpack(std::vector<BackpackItem> &backpack) {
     }
 }
 
+std::vector<Item> generateItems(int numItems, int maxValue, int maxWeight) {
+    std::vector<Item> items;
+
+    std::srand(std::time(nullptr)); // Seed the random number generator
+
+    for (int i = 0; i < numItems; ++i) {
+        Item newItem;
+        newItem.value = std::rand() % (maxValue + 1);
+        newItem.weight = std::rand() % (maxWeight + 1);
+        newItem.numberOfItems = std::rand() % 5 + 1; // Number of items can be between 1 and 5
+        items.push_back(newItem);
+    }
+
+    return items;
+}
+
+void calculateBackpackProblem(
+        void (*backpackProblem)(std::vector<BackpackItem> &, std::vector<Item> &, unsigned int),
+        std::vector<BackpackItem> backpack,
+        std::vector<Item> listOfItems,
+        unsigned int backpackSize
+) {
+    auto start = std::chrono::system_clock::now();
+    backpackProblem(backpack, listOfItems, backpackSize);
+    auto end = std::chrono::system_clock::now();
+
+    // Calculate the duration in milliseconds
+    auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    if (durationMs >= 1000) {
+        // Convert duration to seconds if it's longer than one second
+        double duration_sec = static_cast<double>(durationMs) / 1000.0;
+        std::cout << duration_sec << "s\n\n";
+    } else {
+        std::cout << durationMs << "ms\n\n";
+    }
+}
+
+void calculate_benchmark() {
+    int numItems = 10000;
+    int maxValue = 100;
+    int maxWeight = 50;
+    unsigned int backpackSize = 200000;
+    std::vector<BackpackItem> backpack;
+
+    std::vector<Item> items = generateItems(numItems, maxValue, maxWeight);
+
+    calculateBackpackProblem(fillBackpackMergeSort, backpack, items, backpackSize);
+
+    backpack = std::vector<BackpackItem>(0, BackpackItem());
+    calculateBackpackProblem(fillBackpackSelectionSort, backpack, items, backpackSize);
+
+    printBackpack(backpack);
+}
+
 int main() {
     std::vector<BackpackItem> backpack;
     std::vector<Item> listOfItems;
 
-    listOfItems = readItems();
+//    listOfItems = readItems();
+//
+//    unsigned int backpackSize;
+//    std::cin >> backpackSize;
+//
+//    fillBackpackMergeSort(backpack, listOfItems, backpackSize);
 
-    unsigned int backpackSize;
-    std::cin >> backpackSize;
-
-    fillBackpackMergeSort(backpack, listOfItems, backpackSize);
+    calculate_benchmark();
 
     printBackpack(backpack);
 
     return 0;
 }
+
