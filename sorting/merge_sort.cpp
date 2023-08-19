@@ -24,8 +24,7 @@ void merge(std::vector<int> &vector, int left, int mid, int right) {
         if (leftVector[indexLeftVector] <= rightVector[indexRightVector]) {
             vector[indexMergedVector] = leftVector[indexLeftVector];
             indexLeftVector++;
-        }
-        if (rightVector[indexRightVector] < leftVector[indexLeftVector]) {
+        } else {
             vector[indexMergedVector] = rightVector[indexRightVector];
             indexRightVector++;
         }
