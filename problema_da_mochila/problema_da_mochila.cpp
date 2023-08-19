@@ -21,7 +21,7 @@ typedef struct BackpackItem {
 } BackpackItem;
 
 void
-putInBackpack(Item &item, std::vector<BackpackItem> &backpack, unsigned int backpackSize, unsigned int backpackIndex,
+putInBackpack(Item &item, std::vector<BackpackItem> &backpack, unsigned int &backpackSize, unsigned int &backpackIndex,
               unsigned int smallestWeight) {
     bool alreadyInBackpack = false;
     while (backpackSize >= item.weight and item.numberOfItems > 0) {
