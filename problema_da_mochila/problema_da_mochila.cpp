@@ -20,6 +20,26 @@ typedef struct BackpackItem {
     int quantity = 0;
 } BackpackItem;
 
+void
+putInBackpack(Item &item, std::vector<BackpackItem> &backpack, unsigned int backpackSize, unsigned int backpackIndex,
+              unsigned int smallestWeight) {
+    bool alreadyInBackpack = false;
+    while (backpackSize >= item.weight and item.numberOfItems > 0) {
+        if (not alreadyInBackpack) {
+            backpackIndex++;
+            backpack.emplace_back();
+            backpack[backpackIndex].itemType = item.tag;
+            alreadyInBackpack = true;
+        }
+        backpack[backpackIndex].quantity++;
+        backpackSize -= item.weight;
+        item.numberOfItems--;
+    }
+    if (backpackSize < smallestWeight) {
+        return;
+    }
+}
+
 void fillBackpackSelectionSort(std::vector<BackpackItem> &backpack, std::vector<Item> &listOfItems,
                                unsigned int backpackSize) {
     // Selection sort algorithm
@@ -46,21 +66,7 @@ void fillBackpackSelectionSort(std::vector<BackpackItem> &backpack, std::vector<
         listOfItems[indexMax] = listOfItems[i];
         listOfItems[i] = bestItem;
 
-        bool alreadyInBackpack = false;
-        while (backpackSize >= bestItem.weight and bestItem.numberOfItems > 0) {
-            if (not alreadyInBackpack) {
-                backpackIndex++;
-                backpack.emplace_back();
-                backpack[backpackIndex].itemType = bestItem.tag;
-                alreadyInBackpack = true;
-            }
-            backpack[backpackIndex].quantity++;
-            backpackSize -= bestItem.weight;
-            bestItem.numberOfItems--;
-        }
-        if (backpackSize < smallestWeight) {
-            return;
-        }
+        putInBackpack(bestItem, backpack, backpackSize, backpackIndex, smallestWeight);
     }
 };
 
@@ -114,7 +120,6 @@ void mergeSortRecursive(std::vector<Item> &vector, int begin, int end) {
     merge(vector, begin, mid, end);
 }
 
-
 void mergeSort(std::vector<Item> &vector) {
     int vectorSize = vector.size() - 1;
     mergeSortRecursive(vector, 0, vectorSize);
@@ -134,24 +139,11 @@ void fillBackpackMergeSort(std::vector<BackpackItem> &backpack, std::vector<Item
         }
     }
 
-    for (auto item: listOfItems) {
-        bool alreadyInBackpack = false;
-        while (backpackSize >= item.weight and item.numberOfItems > 0) {
-            if (not alreadyInBackpack) {
-                backpackIndex++;
-                backpack.emplace_back();
-                backpack[backpackIndex].itemType = item.tag;
-                alreadyInBackpack = true;
-            }
-            backpack[backpackIndex].quantity++;
-            backpackSize -= item.weight;
-            item.numberOfItems--;
-        }
-        if (backpackSize < smallestWeight) {
-            return;
-        }
+    for (Item item: listOfItems) {
+        putInBackpack(item, backpack, backpackSize, backpackIndex, smallestWeight);
     }
 };
+
 
 std::vector<Item> readItems() {
     std::vector<Item> listOfItems;
