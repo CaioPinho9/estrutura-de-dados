@@ -22,7 +22,7 @@ void printVector(std::vector<int> &v) {
 std::vector<int> generateRandomVector(unsigned int vector_size) {
     std::vector<int> vector = {};
     for (int i = 0; i < vector_size; ++i) {
-        auto n = rand() % 1000;
+        auto n = rand() % 10;
         vector.push_back(n);
     }
     return vector;
