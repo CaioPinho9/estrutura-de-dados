@@ -39,9 +39,7 @@ void putInBackpack(
         backpack[backpackIndex].quantity++;
         backpackSize -= item.weight;
         item.numberOfItems--;
-    }
-    if (backpackSize < smallestWeight) {
-        return;
+        if (backpackSize < smallestWeight) return;
     }
 }
 
@@ -76,9 +74,9 @@ void fillBackpackSelectionSort(
 
         putInBackpack(bestItem, backpack, backpackSize, backpackIndex, smallestWeight);
     }
-};
+}
 
-void merge(std::vector<Item> &vector, int left, int mid, int right) {
+void merge(std::vector<Item> &vector, unsigned int left, unsigned int mid, unsigned int right) {
     unsigned int const leftVectorSize = mid - left + 1;
     unsigned int const rightVectorSize = right - mid;
 
@@ -118,19 +116,20 @@ void merge(std::vector<Item> &vector, int left, int mid, int right) {
     }
 }
 
-void mergeSortRecursive(std::vector<Item> &vector, int begin, int end) {
+void mergeSortRecursive(std::vector<Item> &vector, unsigned int begin, unsigned int end) {
     if (begin >= end)
         return;
 
-    int mid = begin + (end - begin) / 2;
+    unsigned int mid = begin + (end - begin) / 2;
     mergeSortRecursive(vector, begin, mid);
     mergeSortRecursive(vector, mid + 1, end);
     merge(vector, begin, mid, end);
 }
 
 void mergeSort(std::vector<Item> &vector) {
-    int vectorSize = vector.size() - 1;
-    mergeSortRecursive(vector, 0, vectorSize);
+    unsigned int vectorSize = vector.size();
+    unsigned int lastIndex = vectorSize - 1;
+    mergeSortRecursive(vector, 0, lastIndex);
 }
 
 void fillBackpackMergeSort(
@@ -153,7 +152,7 @@ void fillBackpackMergeSort(
     for (Item item: listOfItems) {
         putInBackpack(item, backpack, backpackSize, backpackIndex, smallestWeight);
     }
-};
+}
 
 
 std::vector<Item> readItems() {
@@ -183,23 +182,39 @@ void printBackpack(std::vector<BackpackItem> &backpack) {
     }
 }
 
-std::vector<Item> generateItems(int numItems, int maxValue, int maxWeight) {
+std::vector<Item> generateItems(int vectorSize, int maxValue, int maxWeight, int maxNumItems) {
     std::vector<Item> items;
 
-    std::srand(std::time(nullptr)); // Seed the random number generator
+    std::srand(std::time(nullptr));
 
-    for (int i = 0; i < numItems; ++i) {
+    for (int i = 0; i < vectorSize; ++i) {
         Item newItem;
+        newItem.tag = i;
         newItem.value = std::rand() % (maxValue + 1);
         newItem.weight = std::rand() % (maxWeight + 1);
-        newItem.numberOfItems = std::rand() % 5 + 1; // Number of items can be between 1 and 5
+        newItem.numberOfItems = std::rand() % (maxNumItems + 1);
         items.push_back(newItem);
     }
 
     return items;
 }
 
-void calculateBackpackProblem(
+std::vector<Item> generateWorstCaseItems(int vectorSize) {
+    std::vector<Item> items;
+
+    for (int i = 0; i < vectorSize; ++i) {
+        Item newItem;
+        newItem.tag = i;
+        newItem.value = i + 1;
+        newItem.weight = 1;
+        newItem.numberOfItems = 5;
+        items.push_back(newItem);
+    }
+
+    return items;
+}
+
+void calculateBackpackProblemTime(
         void (*backpackProblem)(std::vector<BackpackItem> &, std::vector<Item> &, unsigned int),
         std::vector<BackpackItem> backpack,
         std::vector<Item> listOfItems,
@@ -221,19 +236,38 @@ void calculateBackpackProblem(
     }
 }
 
+void printItems(std::vector<Item> &items) {
+    for (auto item: items) {
+        std::cout << "----------------------------------------------------------------\n";
+        std::cout << "Item " << item.tag << '\n';
+        std::cout << "Value " << item.value << '\n';
+        std::cout << "Weight " << item.weight << '\n';
+        std::cout << "Quantity " << item.numberOfItems << '\n';
+    }
+    std::cout << "----------------------------------------------------------------\n";
+}
+
 void calculate_benchmark() {
-    int numItems = 10000;
+    int vectorSize = 100000;
     int maxValue = 100;
     int maxWeight = 50;
-    unsigned int backpackSize = 200000;
+    int maxNumItems = 5;
+    unsigned int backpackSize = 2000;
     std::vector<BackpackItem> backpack;
 
-    std::vector<Item> items = generateItems(numItems, maxValue, maxWeight);
+    std::cout << "Backpack Problem\n";
+    std::cout << "Number of Items: " << vectorSize << '\n';
+    std::vector<Item> items = generateItems(vectorSize, maxValue, maxWeight, maxNumItems);
+//    std::vector<Item> items = generateWorstCaseItems(vectorSize);
 
-    calculateBackpackProblem(fillBackpackMergeSort, backpack, items, backpackSize);
+//    printItems(items);
+
+    std::cout << "Merge Sort:\n";
+    calculateBackpackProblemTime(fillBackpackMergeSort, backpack, items, backpackSize);
 
     backpack = std::vector<BackpackItem>(0, BackpackItem());
-    calculateBackpackProblem(fillBackpackSelectionSort, backpack, items, backpackSize);
+    std::cout << "Selection Sort\n";
+    calculateBackpackProblemTime(fillBackpackSelectionSort, backpack, items, backpackSize);
 
     printBackpack(backpack);
 }
@@ -242,14 +276,14 @@ int main() {
     std::vector<BackpackItem> backpack;
     std::vector<Item> listOfItems;
 
-//    listOfItems = readItems();
-//
-//    unsigned int backpackSize;
-//    std::cin >> backpackSize;
-//
-//    fillBackpackMergeSort(backpack, listOfItems, backpackSize);
+    listOfItems = readItems();
 
-    calculate_benchmark();
+    unsigned int backpackSize;
+    std::cin >> backpackSize;
+
+    fillBackpackMergeSort(backpack, listOfItems, backpackSize);
+
+//    calculate_benchmark();
 
     printBackpack(backpack);
 
