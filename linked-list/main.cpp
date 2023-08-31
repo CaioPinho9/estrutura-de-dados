@@ -1,7 +1,14 @@
 #include <iostream>
+#include <cmath>
+#include <cstdio>
+
+struct City {
+    char tag;
+    int x, y;
+};
 
 struct Node {
-    int value;
+    City value;
     Node *next = nullptr;
 };
 
@@ -12,11 +19,15 @@ private:
 public:
     LinkedList();
 
-    Node *find(int x);
+    Node *find(City x);
 
-    void insert(unsigned int pos, int x);
+    Node *get(unsigned int pos);
+
+    void insert(unsigned int pos, City x);
 
     void swap(unsigned int pos);
+
+    void push_back(City x);
 
     void remove(unsigned int pos);
 
@@ -45,7 +56,7 @@ unsigned int LinkedList::size() {
     return _size;
 }
 
-void LinkedList::insert(unsigned int pos, int x) {
+void LinkedList::insert(unsigned int pos, City x) {
     Node *newNode = new Node;
     newNode->value = x;
 
@@ -75,6 +86,10 @@ void LinkedList::insert(unsigned int pos, int x) {
     _size++;
 }
 
+void LinkedList::push_back(City x) {
+    insert(_size, x);
+}
+
 void LinkedList::swap(unsigned int pos) {
     Node *pivot = head;
     bool isHead = false;
@@ -101,9 +116,17 @@ void LinkedList::swap(unsigned int pos) {
     }
 }
 
-Node *LinkedList::find(int x) {
+Node *LinkedList::find(City x) {
     Node *p = head;
-    while (p != nullptr and p->value != x) {
+    while (p != nullptr and (p->value.x != x.x or p->value.y != x.y)) {
+        p = p->next;
+    }
+    return p;
+}
+
+Node *LinkedList::get(unsigned int pos) {
+    Node *p = head;
+    for (int i = 0; i < pos; ++i) {
         p = p->next;
     }
     return p;
@@ -111,24 +134,80 @@ Node *LinkedList::find(int x) {
 
 void LinkedList::print() {
     Node *p = head;
+    std::cout << '\n';
     for (int i = 0; i <= _size; ++i) {
-        std::cout << p->value;
+        std::cout << p->value.x << ", " << p->value.y << '\n';
         p = p->next;
     }
-    std::cout << '\n';
+}
+
+float distanceBetweenTwoCities(City &a, City &b) {
+    return std::sqrt(std::pow((a.x - b.x), 2) + std::pow((a.y - b.y), 2));
+}
+
+float distanceBetweenFourCities(City &a, City &b, City &c, City &d) {
+    float distance = 0;
+    distance += distanceBetweenTwoCities(a, b);
+    distance += distanceBetweenTwoCities(b, c);
+    distance += distanceBetweenTwoCities(c, d);
+    return distance;
+}
+
+LinkedList readItems() {
+    LinkedList linkedList;
+    for (char letter = 'A'; letter <= 'Z'; ++letter) {
+        City city = City();
+        city.tag = letter;
+        std::cin >> city.x >> city.y;
+        if (city.x == -1) {
+            break;
+        }
+        linkedList.push_back(city);
+    }
+
+    return linkedList;
 }
 
 int main() {
-    LinkedList linkedList = LinkedList();
-    for (int i = 0; i < 10; ++i) {
-        linkedList.insert(i, i);
+    LinkedList linkedList = readItems();
+
+    float oldDistance = 0;
+    for (int i = 0; i < linkedList.size(); ++i) {
+        Node *node = linkedList.get(i);
+        City cityA = node->value;
+        City cityB = node->next->value;
+        oldDistance += distanceBetweenTwoCities(cityA, cityB);
     }
 
-    linkedList.print();
+    printf("%.2f\n", oldDistance);
 
-    linkedList.swap(9);
+    float bestDistance = oldDistance;
+    float newDistance = 0;
 
-    linkedList.print();
+    while (bestDistance != newDistance) {
+        newDistance = 0;
+        for (int i = 0; i < linkedList.size(); ++i) {
+            Node *node = linkedList.get(i);
+            City cityA = node->value;
+            City cityB = node->next->value;
+            City cityC = node->next->next->value;
+            City cityD = node->next->next->next->value;
 
+            float distance1 = distanceBetweenFourCities(cityA, cityB, cityC, cityD);
+            float distance2 = distanceBetweenFourCities(cityA, cityC, cityB, cityD);
+
+            if (distance1 > distance2) {
+                linkedList.swap(i + 1);
+            }
+        }
+        for (int i = 0; i < linkedList.size(); ++i) {
+            Node *node = linkedList.get(i);
+            City cityA = node->value;
+            City cityB = node->next->value;
+            newDistance += distanceBetweenTwoCities(cityA, cityB);
+        }
+        bestDistance = newDistance;
+    }
+    printf("%.2f\n", newDistance);
     return 0;
 }
