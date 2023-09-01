@@ -136,7 +136,7 @@ void LinkedList::print() {
     Node *p = head;
     std::cout << '\n';
     for (int i = 0; i <= _size; ++i) {
-        std::cout << p->value.x << ", " << p->value.y << '\n';
+        std::cout << p->value.tag << ": " << p->value.x << ", " << p->value.y << '\n';
         p = p->next;
     }
 }
@@ -155,14 +155,16 @@ float distanceBetweenFourCities(City &a, City &b, City &c, City &d) {
 
 LinkedList readItems() {
     LinkedList linkedList;
-    for (char letter = 'A'; letter <= 'Z'; ++letter) {
+    int i = 0;
+    while (true) {
         City city = City();
-        city.tag = letter;
+        city.tag = i;
         std::cin >> city.x >> city.y;
         if (city.x == -1) {
             break;
         }
         linkedList.push_back(city);
+        i++;
     }
 
     return linkedList;
@@ -182,10 +184,10 @@ int main() {
     printf("%.2f\n", oldDistance);
 
     float bestDistance = oldDistance;
-    float newDistance = 0;
+    float newDistance;
+    bool distanceImproved;
 
-    while (bestDistance != newDistance) {
-        newDistance = 0;
+    do {
         for (int i = 0; i < linkedList.size(); ++i) {
             Node *node = linkedList.get(i);
             City cityA = node->value;
@@ -200,14 +202,16 @@ int main() {
                 linkedList.swap(i + 1);
             }
         }
+        newDistance = 0;
         for (int i = 0; i < linkedList.size(); ++i) {
             Node *node = linkedList.get(i);
             City cityA = node->value;
             City cityB = node->next->value;
             newDistance += distanceBetweenTwoCities(cityA, cityB);
         }
+        distanceImproved = bestDistance > newDistance;
         bestDistance = newDistance;
-    }
+    } while (distanceImproved);
     printf("%.2f\n", newDistance);
     return 0;
 }
