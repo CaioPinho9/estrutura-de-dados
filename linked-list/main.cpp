@@ -2,8 +2,15 @@
 #include <cmath>
 #include <cstdio>
 
+unsigned int module(int dividend, unsigned int divisor) {
+    while (dividend < 0) {
+        dividend += divisor;
+    }
+    return dividend % divisor;
+}
+
 struct City {
-    char tag;
+    int tag;
     int x, y;
 };
 
@@ -21,15 +28,15 @@ public:
 
     Node *find(City x);
 
-    Node *get(unsigned int pos);
+    Node *get(int pos);
 
-    void insert(unsigned int pos, City x);
+    void insert(int pos, City x);
 
-    void swap(unsigned int pos);
+    void swap(int pos);
 
     void push_back(City x);
 
-    void remove(unsigned int pos);
+    void remove(int pos);
 
     unsigned int size();
 
@@ -56,7 +63,7 @@ unsigned int LinkedList::size() {
     return _size;
 }
 
-void LinkedList::insert(unsigned int pos, City x) {
+void LinkedList::insert(int pos, City x) {
     Node *newNode = new Node;
     newNode->value = x;
 
@@ -90,10 +97,10 @@ void LinkedList::push_back(City x) {
     insert(_size, x);
 }
 
-void LinkedList::swap(unsigned int pos) {
+void LinkedList::swap(int pos) {
     Node *pivot = head;
     bool isHead = false;
-    if (pos % _size == 0) {
+    if (module(pos, _size) == 0) {
         isHead = true;
         pos = _size;
     }
@@ -111,7 +118,7 @@ void LinkedList::swap(unsigned int pos) {
 
     if (isHead) {
         head = target_swap2;
-    } else if (pos % _size == _size - 1) {
+    } else if (module(pos, _size) == _size - 1) {
         head = target_swap1;
     }
 }
@@ -124,9 +131,11 @@ Node *LinkedList::find(City x) {
     return p;
 }
 
-Node *LinkedList::get(unsigned int pos) {
+
+Node *LinkedList::get(int pos) {
     Node *p = head;
-    for (int i = 0; i < pos; ++i) {
+    unsigned int realPos = module(pos, _size);
+    for (int i = 0; i < realPos; ++i) {
         p = p->next;
     }
     return p;
@@ -189,7 +198,7 @@ int main() {
 
     do {
         for (int i = 0; i < linkedList.size(); ++i) {
-            Node *node = linkedList.get(i);
+            Node *node = linkedList.get(i - 1);
             City cityA = node->value;
             City cityB = node->next->value;
             City cityC = node->next->next->value;
@@ -199,7 +208,7 @@ int main() {
             float distance2 = distanceBetweenFourCities(cityA, cityC, cityB, cityD);
 
             if (distance1 > distance2) {
-                linkedList.swap(i + 1);
+                linkedList.swap(i);
             }
         }
         newDistance = 0;
