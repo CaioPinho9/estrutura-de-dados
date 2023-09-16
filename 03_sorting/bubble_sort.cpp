@@ -65,34 +65,34 @@ void bubbleSortOptimized2(std::vector<int> &v) {
 }
 
 //int main() {
-//    std::vector<int> vector;
+//    std::05_vector<int> 05_vector;
 //    unsigned int size = 100000;
 //    std::cout << "Bubble Sort using while" << '\n';
-//    vector = generateRandomVector(size);
-//    printVector(vector);
-//    bubbleSortWhile(vector);
-//    printVector(vector);
+//    05_vector = generateRandomVector(size);
+//    printVector(05_vector);
+//    bubbleSortWhile(05_vector);
+//    printVector(05_vector);
 //
 //    std::cout << "Bubble Sort using for" << '\n';
-//    vector = generateRandomVector(size);
-//    printVector(vector);
-//    bubbleSortFor(vector);
-//    printVector(vector);
+//    05_vector = generateRandomVector(size);
+//    printVector(05_vector);
+//    bubbleSortFor(05_vector);
+//    printVector(05_vector);
 //
 //    std::cout << "Bubble Sort Optimizing 1" << '\n';
-//    vector = generateRandomVector(size);
-//    printVector(vector);
-//    bubbleSortOptimized1(vector);
-//    printVector(vector);
+//    05_vector = generateRandomVector(size);
+//    printVector(05_vector);
+//    bubbleSortOptimized1(05_vector);
+//    printVector(05_vector);
 //
 //    std::cout << "Bubble Sort Optimizing 2" << '\n';
-//    vector = generateRandomVector(size);
-//    printVector(vector);
-//    bubbleSortOptimized2(vector);
-//    printVector(vector);
+//    05_vector = generateRandomVector(size);
+//    printVector(05_vector);
+//    bubbleSortOptimized2(05_vector);
+//    printVector(05_vector);
 //
 //    unsigned int size = 50000;
-//    std::vector<int> vector = generateRandomVector(size);
+//    std::05_vector<int> 05_vector = generateRandomVector(size);
 //    std::cout << "Tamanho: " << size << '\n';
 //
 //    std::cout << "Bubble Sort using while:\n";
@@ -100,9 +100,9 @@ void bubbleSortOptimized2(std::vector<int> &v) {
 //    std::cout << "Bubble Sort using for:\n";
 //    calculateSortingFunctionTime(bubbleSortFor, unsorted_vector, false);
 //    std::cout << "Bubble Sort Optimizing 1:\n";
-//    calculateSortingFunctionTime(bubbleSortOptimized1, vector, false);
+//    calculateSortingFunctionTime(bubbleSortOptimized1, 05_vector, false);
 //    std::cout << "Bubble Sort Optimizing 2:\n";
-//    calculateSortingFunctionTime(bubbleSortOptimized2, vector, false);
+//    calculateSortingFunctionTime(bubbleSortOptimized2, 05_vector, false);
 //
 //    return 0;
 //}

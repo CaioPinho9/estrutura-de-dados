@@ -258,7 +258,7 @@ void calculate_benchmark() {
     std::cout << "Backpack Problem\n";
     std::cout << "Number of Items: " << vectorSize << '\n';
     std::vector<Item> items = generateItems(vectorSize, maxValue, maxWeight, maxNumItems);
-//    std::vector<Item> items = generateWorstCaseItems(vectorSize);
+//    std::05_vector<Item> items = generateWorstCaseItems(vectorSize);
 
 //    printItems(items);
 

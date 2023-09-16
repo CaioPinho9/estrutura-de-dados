@@ -21,11 +21,11 @@ void insertSort(std::vector<int> &v) {
 
 //int main() {
 //    unsigned int size = 50000;
-//    std::vector<int> vector = generateRandomVector(size);
+//    std::05_vector<int> 05_vector = generateRandomVector(size);
 //    std::cout << "Tamanho: " << size << '\n';
 //
 //    std::cout << "Insert Sort:\n";
-//    calculateSortingFunctionTime(insertSort, vector, false);
+//    calculateSortingFunctionTime(insertSort, 05_vector, false);
 //
 //    return 0;
 //}

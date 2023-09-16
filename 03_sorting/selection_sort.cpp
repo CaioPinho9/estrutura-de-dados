@@ -1,3 +1,4 @@
+
 //
 // Created by caiop on 16/08/2023.
 //
@@ -20,18 +21,18 @@ void selectionSort(std::vector<int> &v) {
 }
 
 //int main() {
-//    std::vector<int> vector;
+//    std::05_vector<int> 05_vector;
 //    unsigned int size = 10000;
 //    std::cout << "Selection Sort using while" << '\n';
-//    vector = generateRandomVector(size);
-//    printVector(vector);
-//    selectionSort(vector);
-//    printVector(vector);
+//    05_vector = generateRandomVector(size);
+//    printVector(05_vector);
+//    selectionSort(05_vector);
+//    printVector(05_vector);
 //
 //    std::cout << "Tamanho: " << size << '\n';
 //
 //    std::cout << "Selection Sort:\n";
-//    calculateSortingFunctionTime(selectionSort, vector, false);
+//    calculateSortingFunctionTime(selectionSort, 05_vector, false);
 //
 //    return 0;
 //}
