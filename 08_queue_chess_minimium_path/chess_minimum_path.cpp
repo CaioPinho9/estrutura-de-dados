@@ -3,21 +3,37 @@
 //
 
 #include <iostream>
+#include <unordered_map>
+#include <vector>
+
+// Defines a square as a pair (row, col):
+struct Square {
+    unsigned row;
+    unsigned col;
+
+    Square() = default;
+
+    Square(unsigned r, unsigned c) {
+        row = r;
+        col = c;
+    }
+};
+
 
 class Queue {
 private:
     unsigned currentSize, head, tail, capacity;
-    int *array;
+    Square *array;
 public:
     Queue() {
         currentSize = 0;
         head = 0;
         tail = 0;
-        capacity = 10;
-        array = new int[capacity];
+        capacity = 30;
+        array = new Square[capacity];
     }
 
-    void queue(int x) {
+    void push(Square x) {
         if ((tail + 1) % capacity == head)
             realoc_array();
 
@@ -26,18 +42,18 @@ public:
         currentSize++;
     }
 
-    int enqueue() {
-        int x = array[head];
+    Square pop() {
+        Square x = array[head];
         head = (head + 1) % capacity;
         currentSize--;
         return x;
     }
 
-    int front() {
+    Square front() {
         return array[head];
     }
 
-    int back() {
+    Square back() {
         return array[(tail - 1) % capacity];
     }
 
@@ -45,11 +61,15 @@ public:
         return currentSize;
     }
 
+    bool empty() const {
+        return currentSize == 0;
+    }
+
     void print() {
         for (int i = 0; i < currentSize; ++i) {
-            int x = enqueue();
-            std::cout << x << ' ';
-            queue(x);
+            Square x = pop();
+            std::cout << '(' << x.col << ',' << x.row << ')';
+            push(x);
         }
         std::cout << '\n';
     }
@@ -57,7 +77,7 @@ public:
 private:
     void realoc_array() {
         capacity *= 2;
-        int *aux_array = new int[capacity];
+        auto *aux_array = new Square[capacity];
         unsigned oldIndex = head;
         unsigned oldCapacity = capacity / 2;
         for (unsigned realIndex = 0; realIndex < currentSize; ++realIndex) {
@@ -72,23 +92,128 @@ private:
 
 };
 
+
+class ChessBoard {
+private:
+    int board[8][8] = {
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1
+    };
+    unsigned int _sz = 8;
+public:
+    unsigned int size() const {
+        return _sz;
+    }
+
+    int *operator[](unsigned i) {
+        /* Enables the use of [] operator for ChessBoard objects */
+        return board[i];
+    }
+
+    void fill(int value) {
+        /* Fills all the board with a specific value */
+        for (unsigned i = 0; i < size(); ++i) {
+            for (unsigned j = 0; j < size(); ++j) {
+                board[i][j] = value;
+            }
+        }
+    }
+
+    void print() {
+        std::cout << '\n';
+        for (int i = 0; i < size(); i++) {
+            for (int j = 0; j < size(); j++) {
+                std::cout << board[i][j] << " ";
+            }
+            std::cout << '\n';
+        }
+    }
+};
+
+std::ostream &operator<<(std::ostream &out, ChessBoard &board) {
+    /* Enables the use of std::cout <<board
+     * to print the board.Maybeused for debugging.
+     */
+    for (auto i = 0u; i < board.size(); ++i) {
+        for (auto j = 0u; j < board.size(); ++j) {
+            out << board[i][j] << ' ';
+        }
+        out << '\n';
+    }
+    return out;
+}
+
+bool square_valid(const Square &s, const ChessBoard &board) {
+    // Since weare using unsigned for the squares,there is no need to check
+    // whether values are >=0.
+    unsigned n = board.size();
+    return s.row < n and s.col < n;
+}
+
+std::vector<Square> getPossiblePositions(const Square &square, const ChessBoard &board) {
+    std::vector<Square> possiblePositions;
+
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            if (abs(i) + abs(j) == 3) {
+                Square newSquare = Square(square.row + i, square.col + j);
+
+                if (square_valid(newSquare, board))
+                    possiblePositions.push_back(newSquare);
+            }
+        }
+    }
+    return possiblePositions;
+}
+
+unsigned get_knight_path_length(const Square &origin, const Square &dest) {
+    //The solution goes here...
+    ChessBoard distancesBoard;
+    Queue Q;
+    distancesBoard[origin.col][origin.row] = 0;
+    Q.push(origin);
+    while (not Q.empty()) {
+        auto thisSquare = Q.front();
+        std::vector<Square> possiblePositions = getPossiblePositions(thisSquare, distancesBoard);
+        Q.pop();
+        for (auto possiblePos: possiblePositions) {
+            if (distancesBoard[possiblePos.col][possiblePos.row] == -1) {
+                distancesBoard[possiblePos.col][possiblePos.row] = distancesBoard[thisSquare.col][thisSquare.row] + 1;
+                Q.push(possiblePos);
+            }
+        }
+    }
+
+    return distancesBoard[dest.col][dest.row];
+}
+
 int main() {
-    Queue queue;
-
-    for (int i = 0; i < 10; i++) {
-        queue.queue(i);
-    }
-
-    queue.enqueue();
-    queue.enqueue();
-    queue.enqueue();
-
-    queue.print();
-
-    for (int i = 0; i < 100; i++) {
-        queue.queue(i);
-        queue.print();
-    }
-
+    //Used to map the squares as char to indices of the board
+    std::unordered_map<char, unsigned> table = {
+            {'a', 0},
+            {'b', 1},
+            {'c', 2},
+            {'d', 3},
+            {'e', 4},
+            {'f', 5},
+            {'g', 6},
+            {'h', 7}
+    };
+    char icol, ocol;
+    unsigned irow, orow;
+    std::cin >> icol >> irow;
+    std::cin.ignore(1);
+    //Skip the '\n' char at the input;
+    std::cin >> ocol >> orow;
+    Square origin(irow - 1, table[icol]);
+    Square dest(orow - 1, table[ocol]);
+    unsigned nmoves = get_knight_path_length(origin, dest);
+    std::cout << "Movimentos: " << nmoves << '\n';
     return 0;
 }
