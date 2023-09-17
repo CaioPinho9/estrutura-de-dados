@@ -187,6 +187,8 @@ unsigned get_knight_path_length(const Square &origin, const Square &dest) {
                 distancesBoard[possiblePos.col][possiblePos.row] = distancesBoard[thisSquare.col][thisSquare.row] + 1;
                 Q.push(possiblePos);
             }
+            if (possiblePos.col == dest.col and possiblePos.row == dest.row)
+                return distancesBoard[dest.col][dest.row];
         }
     }
 
