@@ -116,29 +116,12 @@ public:
         return board[i];
     }
 
-    void fill(int value) {
-        /* Fills all the board with a specific value */
-        for (unsigned i = 0; i < size(); ++i) {
-            for (unsigned j = 0; j < size(); ++j) {
-                board[i][j] = value;
-            }
-        }
-    }
-
-    void print() {
-        std::cout << '\n';
-        for (int i = 0; i < size(); i++) {
-            for (int j = 0; j < size(); j++) {
-                std::cout << board[i][j] << " ";
-            }
-            std::cout << '\n';
-        }
-    }
 };
 
 std::ostream &operator<<(std::ostream &out, ChessBoard &board) {
-    /* Enables the use of std::cout <<board
-     * to print the board.Maybeused for debugging.
+    /* Enables the use of std::cout << board
+     * to print the board.
+     * May be used for debugging.
      */
     for (auto i = 0u; i < board.size(); ++i) {
         for (auto j = 0u; j < board.size(); ++j) {
@@ -156,9 +139,13 @@ bool square_valid(const Square &s, const ChessBoard &board) {
     return s.row < n and s.col < n;
 }
 
-std::vector<Square> getPossiblePositions(const Square &square, const ChessBoard &board) {
+std::vector<Square> getPossibleMoves(const Square &square, const ChessBoard &board) {
+    // Returns all the possible moves of a knight according to its current position
     std::vector<Square> possiblePositions;
 
+    // The move os a knight is always 2 in one direction and 1 in the other
+    // So we loop around all combinations between -2 and 2 for both directions
+    // The sum of the absolute values needs to be 3
     for (int i = -2; i <= 2; ++i) {
         for (int j = -2; j <= 2; ++j) {
             if (abs(i) + abs(j) == 3) {
@@ -180,19 +167,19 @@ unsigned get_knight_path_length(const Square &origin, const Square &dest) {
     Q.push(origin);
     while (not Q.empty()) {
         auto thisSquare = Q.front();
-        std::vector<Square> possiblePositions = getPossiblePositions(thisSquare, distancesBoard);
+        std::vector<Square> possibleMoves = getPossibleMoves(thisSquare, distancesBoard);
         Q.pop();
-        for (auto possiblePos: possiblePositions) {
+        for (auto possiblePos: possibleMoves) {
             if (distancesBoard[possiblePos.col][possiblePos.row] == -1) {
                 distancesBoard[possiblePos.col][possiblePos.row] = distancesBoard[thisSquare.col][thisSquare.row] + 1;
                 Q.push(possiblePos);
             }
+            // Returns early arriving at destination
             if (possiblePos.col == dest.col and possiblePos.row == dest.row)
                 return distancesBoard[dest.col][dest.row];
         }
     }
-
-    return distancesBoard[dest.col][dest.row];
+    return -1;
 }
 
 int main() {
