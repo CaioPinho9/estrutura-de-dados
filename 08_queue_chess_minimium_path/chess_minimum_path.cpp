@@ -48,7 +48,7 @@ public:
     void print() {
         for (int i = 0; i < currentSize; ++i) {
             int x = enqueue();
-            std::cout << x;
+            std::cout << x << ' ';
             queue(x);
         }
         std::cout << '\n';
@@ -59,9 +59,10 @@ private:
         capacity *= 2;
         int *aux_array = new int[capacity];
         unsigned oldIndex = head;
+        unsigned oldCapacity = capacity / 2;
         for (unsigned realIndex = 0; realIndex < currentSize; ++realIndex) {
-            aux_array[realIndex] = array[oldIndex % capacity];
-            oldIndex++;
+            aux_array[realIndex] = array[oldIndex];
+            oldIndex = (oldIndex + 1) % oldCapacity;
         }
         head = 0;
         tail = currentSize;
@@ -78,21 +79,16 @@ int main() {
         queue.queue(i);
     }
 
-    std::cout << queue.back()<< '\n';
-    std::cout << queue.front()<< '\n';
-
     queue.enqueue();
-    std::cout << queue.front()<< '\n';
     queue.enqueue();
-    std::cout << queue.front()<< '\n';
     queue.enqueue();
-    std::cout << queue.front()<< '\n';
-
-    for (int i = 0; i < 10; i++) {
-        queue.queue(i);
-    }
 
     queue.print();
+
+    for (int i = 0; i < 100; i++) {
+        queue.queue(i);
+        queue.print();
+    }
 
     return 0;
 }
