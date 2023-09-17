@@ -940,11 +940,13 @@ gradle-app.setting
 ##### CMake
 CMakeLists.txt.user
 CMakeCache.txt
+*CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
 Makefile
 cmake_install.cmake
+*cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
