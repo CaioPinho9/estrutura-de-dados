@@ -942,6 +942,8 @@ CMakeLists.txt.user
 CMakeCache.txt
 *CMakeCache.txt
 CMakeFiles
+CMakeFiles.txt
+*CMakeLists.txt
 CMakeScripts
 Testing
 Makefile
