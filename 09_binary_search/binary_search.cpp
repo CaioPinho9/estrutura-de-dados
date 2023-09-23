@@ -38,7 +38,7 @@ float binary_search_time(std::vector<int> &v, int x) {
     auto startTime = std::chrono::high_resolution_clock::now();
     binary_search(v, x);
     auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime);
     return duration.count();
 }
 
@@ -46,7 +46,7 @@ float sequencial_search_time(std::vector<int> &v, int x) {
     auto startTime = std::chrono::high_resolution_clock::now();
     sequencial_search(v, x);
     auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime);
     return duration.count();
 }
 
@@ -67,10 +67,10 @@ int main() {
     std::vector<int> list_of_list_sizes;
     std::vector<float> list_of_x_values;
 
-    for (int j = 0; j < 1000; j++) {
+    for (int j = 0; j < 20000; j++) {
         std::vector<int> randomIntegers;
 
-        int durationB, durationS, list_size = 1000;
+        int durationB, durationS, list_size = 5;
 
         float random = random_number(list_size - 1) / list_size;
 
@@ -82,9 +82,9 @@ int main() {
             durationS = sequencial_search_time(randomIntegers, static_cast<int>(list_size * random));
             durationB = binary_search_time(randomIntegers, static_cast<int>(list_size * random));
 
-            list_size += 100;
+            list_size += 1;
         } while (durationS <= durationB);
-        std::cout << j << ": " << list_size << " x: " << random << "\n";
+//        std::cout << j << ": " << list_size << " x: " << random << "\n";
         list_of_list_sizes.push_back(list_size);
         list_of_x_values.push_back(random);
     }
