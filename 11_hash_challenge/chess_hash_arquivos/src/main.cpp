@@ -112,8 +112,10 @@ struct chess_hash {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 int c = board.get(x, y);
+                int a = x ^ 1;
+                int b = y ^ 1;
 
-                hash += c * x * x * y * (x + y);
+                hash += c * a * a * b * (a + b);
             }
         }
         return hash;
