@@ -11,7 +11,9 @@ sequentialTimeData = df['sequentialTimeData']
 binaryTimeData = df['binaryTimeData']
 mapTimeData = df['mapTimeData']
 
-plt.scatter(sequentialTimeData, mapTimeData, marker='o')
+df_to_plot = df[['mapTimeData', 'positionData']]
+
+df_to_plot.plot(marker='o')
 
 # Add labels and a title
 
@@ -23,12 +25,12 @@ percentiles = [25, 50, 75, 100]
 print("Sequential: ")
 for percentile in percentiles:
     result = np.percentile(sequentialTimeData, percentile)
-    print(f"{percentile}% Percentile: {result}", end=" | ")
+    print(f"{percentile}%: {result}", end=" | ")
 
 print("\nBinary: ")
 for percentile in percentiles:
     result = np.percentile(binaryTimeData, percentile)
-    print(f"{percentile}% Percentile: {result}", end=" | ")
+    print(f"{percentile}%: {result}", end=" | ")
 
 print("\nHash: ")
 for percentile in percentiles:
