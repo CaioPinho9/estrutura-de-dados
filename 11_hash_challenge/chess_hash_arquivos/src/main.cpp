@@ -166,4 +166,12 @@ void run_experiment(const std::string &folder_all,
     }
     end_insertions = std::chrono::system_clock::now();
     std::cout << "Tempo para as buscas\n";
-    st
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end_insertions - start_insertions).count()
+              << "ms\n";
+}
+
+
+int main() {
+    run_experiment("../dataset/all", "../dataset/candidates");
+    return 0;
+}
