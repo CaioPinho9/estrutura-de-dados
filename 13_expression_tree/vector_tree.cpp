@@ -12,6 +12,8 @@ private:
 
     void realoc_vector() {
         capacity *= 4;
+        if (capacity > 30000000)
+            throw std::exception("to big capacity");
         tree.resize(capacity);
     };
 
@@ -43,14 +45,6 @@ public:
         return 2 * index + 2;
     };
 
-    std::string getLeftChildValue(int index) {
-        return tree[2 * index + 1];
-    };
-
-    std::string getRightChildValue(int index) {
-        return tree[2 * index + 2];
-    };
-
     int depth(int index) {
         if (index == 0)
             return 0;
@@ -58,10 +52,13 @@ public:
     }
 
     bool isLeaf(int index) {
-        std::string left = VectorTree::getLeftChildValue(index);
-        std::string right = VectorTree::getRightChildValue(index);
+        if (index > capacity)
+            return true;
 
-        return left.empty() && right.empty();
+        bool left = !nodeExists(VectorTree::getLeftChildIndex(index));
+        bool right = !nodeExists(VectorTree::getLeftChildIndex(index));
+
+        return left && right;
     }
 
     int height(int index) {
@@ -75,6 +72,10 @@ public:
         return 1 + maxChildHeight;
     }
 
+    bool nodeExists(int index) {
+        return index < capacity and !tree[index].empty();
+    }
+
     void displayTree(int index = 0, int depth = 0) {
         if (tree[index].empty())
             return;
@@ -85,13 +86,17 @@ public:
 
         std::cout << tree[index] << std::endl;
 
-        displayTree(VectorTree::getLeftChildIndex(index), depth + 1);
-        displayTree(VectorTree::getRightChildIndex(index), depth + 1);
+        int leftChildIndex = VectorTree::getLeftChildIndex(index);
+        int rightChildIndex = VectorTree::getRightChildIndex(index);
+        if (nodeExists(leftChildIndex))
+            displayTree(leftChildIndex, depth + 1);
+        if (nodeExists(rightChildIndex))
+            displayTree(rightChildIndex, depth + 1);
     };
 
     void breadthFirstSearchVector() {
         for (int i = 0; i < tree.size(); ++i) {
-            if (!tree[i].empty())
+            if (nodeExists(i))
                 std::cout << tree[i];
         }
     }
@@ -105,9 +110,9 @@ public:
             int leftChildIndex = VectorTree::getLeftChildIndex(front);
             int rightChildIndex = VectorTree::getRightChildIndex(front);
             std::cout << tree[front];
-            if (!tree[leftChildIndex].empty())
+            if (nodeExists(leftChildIndex))
                 queue.push(leftChildIndex);
-            if (!tree[rightChildIndex].empty())
+            if (nodeExists(rightChildIndex))
                 queue.push(rightChildIndex);
         }
     }
@@ -117,9 +122,9 @@ public:
         int rightChildIndex = VectorTree::getRightChildIndex(index);
 
         std::cout << tree[index];
-        if (!tree[leftChildIndex].empty())
+        if (nodeExists(leftChildIndex))
             preOrder(leftChildIndex);
-        if (!tree[rightChildIndex].empty())
+        if (nodeExists(rightChildIndex))
             preOrder(rightChildIndex);
     }
 
@@ -127,10 +132,10 @@ public:
         int leftChildIndex = VectorTree::getLeftChildIndex(index);
         int rightChildIndex = VectorTree::getRightChildIndex(index);
 
-        if (!tree[leftChildIndex].empty())
+        if (nodeExists(leftChildIndex))
             inlineOrder(leftChildIndex);
         std::cout << tree[index];
-        if (!tree[rightChildIndex].empty())
+        if (nodeExists(rightChildIndex))
             inlineOrder(rightChildIndex);
     }
 
@@ -138,9 +143,9 @@ public:
         int leftChildIndex = VectorTree::getLeftChildIndex(index);
         int rightChildIndex = VectorTree::getRightChildIndex(index);
 
-        if (!tree[leftChildIndex].empty())
+        if (nodeExists(leftChildIndex))
             posOrder(leftChildIndex);
-        if (!tree[rightChildIndex].empty())
+        if (nodeExists(rightChildIndex))
             posOrder(rightChildIndex);
         std::cout << tree[index];
     }
@@ -194,6 +199,7 @@ public:
     std::string expression;
 
     explicit ArithmeticExpressionVector(const std::string &expression) {
+        tree = VectorTree();
         this->expression = expression;
         buildTree(0, expression);
     };
@@ -235,6 +241,4 @@ public:
     int size() {
         return expression.size();
     }
-
-    ~ArithmeticExpressionVector() = default;
 };
