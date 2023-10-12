@@ -3,8 +3,9 @@
 #include <vector>
 #include <unordered_set>
 #include <climits>
+#include <queue>
 
-class Tree {
+class VectorTree {
 private:
     std::vector<std::string> tree;
     unsigned capacity;
@@ -15,7 +16,7 @@ private:
     };
 
 public:
-    Tree() {
+    VectorTree() {
         capacity = 100;
         tree.resize(capacity);
     };
@@ -57,8 +58,8 @@ public:
     }
 
     bool isLeaf(int index) {
-        std::string left = Tree::getLeftChildValue(index);
-        std::string right = Tree::getRightChildValue(index);
+        std::string left = VectorTree::getLeftChildValue(index);
+        std::string right = VectorTree::getRightChildValue(index);
 
         return left.empty() && right.empty();
     }
@@ -84,20 +85,36 @@ public:
 
         std::cout << tree[index] << std::endl;
 
-        displayTree(Tree::getLeftChildIndex(index), depth + 1);
-        displayTree(Tree::getRightChildIndex(index), depth + 1);
+        displayTree(VectorTree::getLeftChildIndex(index), depth + 1);
+        displayTree(VectorTree::getRightChildIndex(index), depth + 1);
     };
 
-    void breadthFirstSearch() {
+    void breadthFirstSearchVector() {
         for (int i = 0; i < tree.size(); ++i) {
             if (!tree[i].empty())
                 std::cout << tree[i];
         }
     }
 
+    void breadthFirstSearchQueue() {
+        std::queue<int> queue;
+        queue.push(0);
+        while (not queue.empty()) {
+            auto front = queue.front();
+            queue.pop();
+            int leftChildIndex = VectorTree::getLeftChildIndex(front);
+            int rightChildIndex = VectorTree::getRightChildIndex(front);
+            std::cout << tree[front];
+            if (!tree[leftChildIndex].empty())
+                queue.push(leftChildIndex);
+            if (!tree[rightChildIndex].empty())
+                queue.push(rightChildIndex);
+        }
+    }
+
     void preOrder(int index = 0) {
-        int leftChildIndex = Tree::getLeftChildIndex(index);
-        int rightChildIndex = Tree::getRightChildIndex(index);
+        int leftChildIndex = VectorTree::getLeftChildIndex(index);
+        int rightChildIndex = VectorTree::getRightChildIndex(index);
 
         std::cout << tree[index];
         if (!tree[leftChildIndex].empty())
@@ -107,8 +124,8 @@ public:
     }
 
     void inlineOrder(int index = 0) {
-        int leftChildIndex = Tree::getLeftChildIndex(index);
-        int rightChildIndex = Tree::getRightChildIndex(index);
+        int leftChildIndex = VectorTree::getLeftChildIndex(index);
+        int rightChildIndex = VectorTree::getRightChildIndex(index);
 
         if (!tree[leftChildIndex].empty())
             inlineOrder(leftChildIndex);
@@ -118,8 +135,8 @@ public:
     }
 
     void posOrder(int index = 0) {
-        int leftChildIndex = Tree::getLeftChildIndex(index);
-        int rightChildIndex = Tree::getRightChildIndex(index);
+        int leftChildIndex = VectorTree::getLeftChildIndex(index);
+        int rightChildIndex = VectorTree::getRightChildIndex(index);
 
         if (!tree[leftChildIndex].empty())
             posOrder(leftChildIndex);
@@ -129,9 +146,9 @@ public:
     }
 };
 
-class ArithmeticExpression {
+class ArithmeticExpressionVector {
 private:
-    Tree tree;
+    VectorTree tree;
     std::vector<std::unordered_set<char>> priorityOrder = {
             {'-', '+'}, // Least priority
             {'*', '/'}
@@ -167,8 +184,8 @@ private:
                 break;
         };
 
-        int left = Tree::getLeftChildIndex(index);
-        int right = Tree::getRightChildIndex(index);
+        int left = VectorTree::getLeftChildIndex(index);
+        int right = VectorTree::getRightChildIndex(index);
         buildTree(left, subexpression.substr(0, leastPriorityIndex));
         buildTree(right, subexpression.substr(leastPriorityIndex + 1, subexpression.size() - 1));
     };
@@ -176,7 +193,7 @@ private:
 public:
     std::string expression;
 
-    explicit ArithmeticExpression(const std::string &expression) {
+    explicit ArithmeticExpressionVector(const std::string &expression) {
         this->expression = expression;
         buildTree(0, expression);
     };
@@ -186,8 +203,13 @@ public:
         std::cout << std::endl;
     }
 
-    void breadthFirstSearch() {
-        tree.breadthFirstSearch();
+    void breadthFirstSearchQueue() {
+        tree.breadthFirstSearchQueue();
+        std::cout << std::endl;
+    }
+
+    void breadthFirstSearchVector() {
+        tree.breadthFirstSearchVector();
         std::cout << std::endl;
     }
 
@@ -205,25 +227,14 @@ public:
         tree.posOrder();
         std::cout << std::endl;
     }
+
+    int height() {
+        return tree.height(0);
+    }
+
+    int size() {
+        return expression.size();
+    }
+
+    ~ArithmeticExpressionVector() = default;
 };
-
-int main() {
-    std::string expression = "A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+V+X+Y*Z";
-//    std::cin >> expression;
-    ArithmeticExpression arithmeticExpression(expression);
-
-//    std::cout << expression << '\n';
-//    std::cout << "displayTree:\n";
-//    arithmeticExpression.displayTree();
-//    std::cout << "breadthFirstSearch: ";
-//    arithmeticExpression.breadthFirstSearch();
-//    std::cout << "preOrder: ";
-    arithmeticExpression.preOrder();
-//    std::cout << "inlineOrder: ";
-//    arithmeticExpression.inlineOrder();
-//    std::cout << "posOrder: ";
-    arithmeticExpression.posOrder();
-
-    return 0;
-}
-
