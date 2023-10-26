@@ -38,13 +38,14 @@ def calculate_coordinates(tree):
     coordinates = {}  # Store coordinates as (x, y)
 
     def dfs(node, level, left, right):
-        if node:
-            x = (left + right) / 2
-            y = -level
-            coordinates[node] = (x, y)
-            mid = (left + right) / 2
-            dfs(node.left, level + 1, left, mid)
-            dfs(node.right, level + 1, mid, right)
+        if not node:
+            return
+        x = (left + right) / 2
+        y = -level
+        coordinates[node] = (x, y)
+        mid = (left + right) / 2
+        dfs(node.left, level + 1, left, mid)
+        dfs(node.right, level + 1, mid, right)
 
     dfs(tree, 0, 0, 1)
     return coordinates
@@ -81,10 +82,8 @@ def plot_binary_tree(bfs_string):
 
 # Example BFS string
 trees = [
-    "50 20 75 10 40 60 80 # 15 # # 55 65 # 100 # # # # # # # # # # # # # # # 120",
-    "50 20 75 10 40 60 80 # 15 # # 55 # # 100 # # # # # # # # # # # # # # # 120",
-    "50 20 75 10 40 60 100 # 15 # # 55 # # 120",
-    "50 20 100 10 40 60 120 # 15 # # 55 # # #",
+    "11 1 28 # # 23 33 # # # # # 26 # 81 # # # # # # # # # # # # # # 48 91 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 47 61 # 96 ",
+    "0 1 1 # # 2 2 # # # # # 3 # 3 # # # # # # # # # # # # # # 4 4 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 5 5  # 5 ",
 ]
 
 for tree in trees:

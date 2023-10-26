@@ -21,7 +21,11 @@ public:
     }
 
     void insert(TKey key) {
-        _insert(&root, key, nullptr);
+        _insert(&root, key, key, nullptr);
+    }
+
+    void insert(TKey key, TValue value) {
+        _insert(&root, key, value, nullptr);
     }
 
     bool is_empty() {
@@ -75,8 +79,8 @@ public:
         return nodes;
     }
 
-    void print_plot_string() {
-        std::cout << "BFS:\n";
+    void print_plot_string(void (Node<TKey, TValue>::*_printFunction)()) {
+        std::cout << '\"';
         std::queue<Node<TKey, TValue> *> queue;
 
         queue.push(root);
@@ -91,7 +95,7 @@ public:
             if (currentNode->get_key() == INT32_MIN) {
                 std::cout << "# ";
             } else {
-                std::cout << currentNode->get_key() << " ";
+                (currentNode->*_printFunction)();
             }
 
             auto left = currentNode->left();
@@ -109,12 +113,9 @@ public:
             queue.push(left);
             queue.push(right);
         }
-        std::cout << std::endl;
+        std::cout << "\"," << std::endl;
     }
 
-    void print_node(Node<TKey, TValue> *node) {
-        std::cout << node->get_key() << std::endl;
-    }
 
     void print_nodes(std::list<TKey> nodes) {
         for (auto value: nodes) {
@@ -126,9 +127,9 @@ public:
     ~LinkedBinaryTree() = default;
 
 private:
-    void _insert(Node<TKey, TValue> **node, TKey key, Node<TKey, TValue> *parent) {
+    void _insert(Node<TKey, TValue> **node, TKey key, TValue value, Node<TKey, TValue> *parent) {
         if (*node == nullptr) {
-            auto *newNode = new Node<TKey, TValue>(key, nullptr, nullptr, parent);
+            auto *newNode = new Node<TKey, TValue>(key, value, nullptr, nullptr, parent);
             if (parent != nullptr)
                 newNode->_height = parent->_height + 1;
             *node = newNode;
@@ -136,9 +137,9 @@ private:
         }
         (*node)->_size++;
         if (key <= (*node)->get_key()) {
-            _insert(&((*node)->_left), key, *node);
+            _insert(&((*node)->_left), key, value, *node);
         } else {
-            _insert(&((*node)->_right), key, *node);
+            _insert(&((*node)->_right), key, value, *node);
         }
     }
 
@@ -181,8 +182,8 @@ private:
                 cursor = cursor->left();
             }
 
-            auto cursor_key =cursor->_key;
-            auto cursor_value =cursor->_value;
+            auto cursor_key = cursor->_key;
+            auto cursor_value = cursor->_value;
 
             _remove(cursor);
             node->_key = cursor_key;
@@ -278,17 +279,34 @@ public:
     Node() = default;
 
     // We are using the list initializer of the parameters.
-    Node(TKey _k) :
-            _key(_k), _left(nullptr), _right(nullptr) {}
+    Node(TKey __k) :
+            _key(__k), _left(nullptr), _right(nullptr) {}
 
-    Node(TKey _k, Node *__left, Node *__right, Node *__parent) :
-            _key(_k), _left(__left), _right(__right), _parent(__parent) {}
+    Node(TKey __k, Node *__left, Node *__right, Node *__parent) :
+            _key(__k), _left(__left), _right(__right), _parent(__parent) {}
+
+    Node(TKey __k, TValue __value, Node *__left, Node *__right, Node *__parent) :
+            _key(__k), _value(__value), _left(__left), _right(__right), _parent(__parent) {}
 
     TKey get_key() const { return _key; };
 
     TKey get_value() const { return _value; };
 
-    TKey get_size() const { return _size; };
+    unsigned get_size() const { return _size; };
+
+    unsigned get_height() const { return _height; };
+
+    void print_key() {
+        std::cout << get_key() << " ";
+    }
+
+    void print_value() {
+        std::cout << get_value() << " ";
+    }
+
+    void print_height() {
+        std::cout << get_height() << " ";
+    }
 
     Node *parent() const {
         return _parent;
@@ -312,7 +330,7 @@ int main() {
         T.insert(i);
     }
 
-    T.print_plot_string();
+    T.print_plot_string(&Node<int, int>::print_key);
 
     std::cout << "Pre-order:\n";
     for (const auto &x: T.get_preorder()) {
@@ -336,7 +354,7 @@ int main() {
 
     std::cout << "Removing 65\n";
     T.remove(65);
-    T.print_plot_string();
+    T.print_plot_string(&Node<int, int>::print_key);
     std::cout << "Pre-order:\n";
     for (const auto &x: T.get_preorder()) {
         std::cout << x << ' ';
@@ -356,7 +374,7 @@ int main() {
 
     std::cout << "Removing 80\n";
     T.remove(80);
-    T.print_plot_string();
+    T.print_plot_string(&Node<int, int>::print_key);
     std::cout << "Pre-order:\n";
     for (const auto &x: T.get_preorder()) {
         std::cout << x << ' ';
@@ -376,7 +394,7 @@ int main() {
 
     std::cout << "Removing 75\n";
     T.remove(75);
-    T.print_plot_string();
+    T.print_plot_string(&Node<int, int>::print_key);
     std::cout << "Pre-order:\n";
     for (const auto &x: T.get_preorder()) {
         std::cout << x << ' ';
