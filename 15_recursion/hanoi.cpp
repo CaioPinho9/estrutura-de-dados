@@ -13,8 +13,7 @@ int hanoi(int disks, char origin, char aux, char dest) {
 };
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    std::cout << hanoi(5, 'A', 'B', 'C') << std::endl;
+    std::cout << hanoi(25, 'A', 'B', 'C') << std::endl;
     return 0;
 }
 
