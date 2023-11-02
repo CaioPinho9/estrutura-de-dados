@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <sstream>
 
 template<typename TKey, typename TValue>
 class Node;
@@ -21,11 +22,12 @@ public:
     }
 
     void insert(TKey key) {
-        _insert(&root, key, key, nullptr);
+        root = _insert(root, key, key, new bool(true));
+        print_plot_string(&Node<int, int>::print_key);
     }
 
     void insert(TKey key, TValue value) {
-        _insert(&root, key, value, nullptr);
+        root = _insert(root, key, value, new bool(true));
     }
 
     bool is_empty() {
@@ -47,16 +49,16 @@ public:
 
     Node<TKey, TValue> *min() const {
         auto node = root;
-        while (node->left() != nullptr) {
-            node = node->left();
+        while (node->_left != nullptr) {
+            node = node->_left;
         }
         return node;
     }
 
     Node<TKey, TValue> *max() const {
         auto node = root;
-        while (node->right() != nullptr) {
-            node = node->right();
+        while (node->_right != nullptr) {
+            node = node->_right;
         }
         return node;
     }
@@ -85,37 +87,49 @@ public:
 
         queue.push(root);
         unsigned max_height = height();
+        std::vector<Node<TKey, TValue> *> nodes_to_delete;
 
         while (!queue.empty()) {
             auto currentNode = queue.front();
             queue.pop();
             if (currentNode == nullptr)
-                break;
+                continue;
 
-            if (currentNode->get_key() == INT32_MIN) {
+            if (currentNode->_key == INT32_MIN) {
                 std::cout << "# ";
             } else {
                 (currentNode->*_printFunction)();
             }
 
-            auto left = currentNode->left();
-            auto right = currentNode->right();
+            auto left = currentNode->_left;
+            auto right = currentNode->_right;
 
-            if (left == nullptr && max_height - 1 != currentNode->_height) {
-                left = new Node<int, int>(INT32_MIN);
+            if (left == nullptr && max_height != currentNode->_height) {
+                left = new Node<TKey, TValue>(INT32_MIN);
                 left->_height = currentNode->_height + 1;
+                nodes_to_delete.push_back(left);
             }
-            if (right == nullptr && max_height - 1 != currentNode->_height) {
-                right = new Node<int, int>(INT32_MIN);
+            if (right == nullptr && max_height != currentNode->_height) {
+                right = new Node<TKey, TValue>(INT32_MIN);
                 right->_height = currentNode->_height + 1;
+                nodes_to_delete.push_back(right);
             }
 
             queue.push(left);
             queue.push(right);
         }
+        for (auto node: nodes_to_delete) {
+            auto parent = node->_parent;
+            if (parent && parent->_left == node) {
+                parent->_left = nullptr;
+            }
+            if (parent && parent->_right == node) {
+                parent->_right = nullptr;
+            }
+            delete node;
+        }
         std::cout << "\"," << std::endl;
     }
-
 
     void print_nodes(std::list<TKey> nodes) {
         for (auto value: nodes) {
@@ -127,59 +141,147 @@ public:
     ~LinkedBinaryTree() = default;
 
 private:
-    void _insert(Node<TKey, TValue> **node, TKey key, TValue value, Node<TKey, TValue> *parent) {
-        if (*node == nullptr) {
-            auto *newNode = new Node<TKey, TValue>(key, value, nullptr, nullptr, parent);
-            if (parent != nullptr)
-                newNode->_height = parent->_height + 1;
-            *node = newNode;
-            return;
+    Node<TKey, TValue> *_insert(Node<TKey, TValue> *pivot, TKey key, TValue value, bool *new_height) {
+        if (pivot == nullptr) {
+            auto newNode = new Node<TKey, TValue>(key, value, nullptr, nullptr, pivot);
+            *new_height = true;
+            return newNode;
         }
-        (*node)->_size++;
-        if (key <= (*node)->get_key()) {
-            _insert(&((*node)->_left), key, value, *node);
+        pivot->_size++;
+        if (key <= pivot->_key) {
+            pivot->_left = _insert(pivot->_left, key, value, new_height);
+            return _rebalance_left(pivot, new_height);
         } else {
-            _insert(&((*node)->_right), key, value, *node);
+            pivot->_right = _insert(pivot->_right, key, value, new_height);
+            return _rebalance_right(pivot, new_height);
         }
+    }
+
+    Node<TKey, TValue> *_rebalance_left(Node<TKey, TValue> *pivot, bool *new_height) {
+        if (!*new_height)
+            return pivot;
+
+        if (pivot->_bf == +1) {
+            pivot->_bf = 0;
+            *new_height = false;
+            return pivot;
+        } else if (pivot->_bf == 0) {
+            pivot->_bf = -1;
+            *new_height = true;
+            return pivot;
+        }
+
+        if (pivot->_left->_bf == -1) {
+            pivot = _right_rotate(pivot);
+            pivot->_right->_bf = 0;
+        } else {
+            pivot->_left = _left_rotate(pivot->_left);
+            pivot = _right_rotate(pivot);
+            if (pivot->_bf == +1) {
+                pivot->_left->_bf = -1;
+                pivot->_right->_bf = 0;
+            } else if (pivot->_bf == -1) {
+                pivot->_left->_bf = 0;
+                pivot->_right->_bf = 1;
+            } else {
+                pivot->_left->_bf = pivot->_right->_bf = 0;
+            }
+        }
+        pivot->_bf = 0;
+        *new_height = false;
+        return pivot;
+    }
+
+    Node<TKey, TValue> *_rebalance_right(Node<TKey, TValue> *pivot, bool *new_height) {
+        if (!*new_height)
+            return pivot;
+
+        if (pivot->_bf == -1) {
+            pivot->_bf = 0;
+            *new_height = false;
+            return pivot;
+        } else if (pivot->_bf == 0) {
+            pivot->_bf = +1;
+            *new_height = true;
+            return pivot;
+        }
+
+        if (pivot->_right->_bf == +1) {
+            pivot = _left_rotate(pivot);
+            pivot->_left->_bf = 0;
+        } else {
+            pivot->_right = _right_rotate(pivot->_right);
+            pivot = _left_rotate(pivot);
+            if (pivot->_bf == -1) {
+                pivot->_right->_bf = +1;
+                pivot->_left->_bf = 0;
+            } else if (pivot->_bf == +1) {
+                pivot->_right->_bf = 0;
+                pivot->_left->_bf = 1;
+            } else {
+                pivot->_right->_bf = pivot->_left->_bf = 0;
+            }
+        }
+        pivot->_bf = 0;
+        *new_height = false;
+        return pivot;
+    }
+
+    Node<TKey, TValue> *_right_rotate(Node<TKey, TValue> *node) {
+        auto aux = node->_left;
+        node->_left = aux->_right;
+        aux->_right = node;
+
+        if (node == root)
+            root = aux;
+
+        return aux;
+    }
+
+    Node<TKey, TValue> *_left_rotate(Node<TKey, TValue> *node) {
+        auto aux = node->_right;
+        node->_right = aux->_left;
+        aux->_left = node;
+
+        if (node == root)
+            root = aux;
+
+        return aux;
     }
 
     void _remove(Node<TKey, TValue> *node) {
         if (node == nullptr)
             return;
 
-        auto left = node->left();
-        auto right = node->right();
+        auto left = node->_left;
+        auto right = node->_right;
 
         if (left == nullptr && right == nullptr) {
-            auto parent = node->parent();
-            if (node->get_key() <= parent->get_key()) {
+            auto parent = node->_parent;
+            if (node->_key <= parent->_key) {
                 parent->_left = nullptr;
             } else {
                 parent->_right = nullptr;
             }
             delete node;
         } else if (left == nullptr) {
-            auto parent = node->parent();
+            auto parent = node->_parent;
 
-            if (node->get_key() <= parent->get_key()) {
+            if (node->_key <= parent->_key) {
                 parent->_left = right;
             } else {
                 parent->_right = right;
             }
-            right->_height = node->_height;
             right->_parent = parent;
 
             delete node;
-
-            _decrease_height(right->left());
-            _decrease_height(right->right());
         } else {
             node->_size--;
-            auto cursor = node->right();
+            auto cursor = node->_right;
 
-            while (cursor->left() != nullptr) {
+            while (cursor->_left != nullptr) {
                 cursor->_size--;
-                cursor = cursor->left();
+                cursor = cursor->_left;
             }
 
             auto cursor_key = cursor->_key;
@@ -195,24 +297,27 @@ private:
         if (node == nullptr)
             return 0;
 
-        auto left = node->left();
-        auto right = node->right();
+        auto left = node->_left;
+        auto right = node->_right;
 
-        return std::max(_height(left), _height(right)) + 1;
+        unsigned height = std::max(_height(left), _height(right)) + 1;
+        node->_height = height;
+
+        return height;
     }
 
     Node<TKey, TValue> *_find(Node<TKey, TValue> *node, TKey key) {
         if (node == nullptr)
             return nullptr;
 
-        auto currentKey = node->get_key();
+        auto currentKey = node->_key;
 
         if (currentKey == key) {
             return node;
         } else if (key <= currentKey) {
-            return _find(node->left(), key);
+            return _find(node->_left, key);
         } else {
-            return _find(node->right(), key);
+            return _find(node->_right, key);
         }
     }
 
@@ -220,10 +325,10 @@ private:
         if (node == nullptr)
             return;
 
-        auto left = node->left();
-        auto right = node->right();
+        auto left = node->_left;
+        auto right = node->_right;
 
-        nodes.push_back(node->get_key());
+        nodes.push_back(node->_key);
         _get_preorder(left, nodes);
         _get_preorder(right, nodes);
     }
@@ -232,34 +337,24 @@ private:
         if (node == nullptr)
             return;
 
-        auto left = node->left();
-        auto right = node->right();
+        auto left = node->_left;
+        auto right = node->_right;
 
         _get_posorder(left, nodes);
         _get_posorder(right, nodes);
-        nodes.push_back(node->get_key());
+        nodes.push_back(node->_key);
     }
 
     void _get_inorder(Node<TKey, TValue> *node, std::list<TKey> &nodes) {
         if (node == nullptr)
             return;
 
-        auto left = node->left();
-        auto right = node->right();
+        auto left = node->_left;
+        auto right = node->_right;
 
         _get_inorder(left, nodes);
-        nodes.push_back(node->get_key());
+        nodes.push_back(node->_key);
         _get_inorder(right, nodes);
-    }
-
-    void _decrease_height(Node<TKey, TValue> *node) {
-        if (node == nullptr)
-            return;
-
-        node->_height--;
-
-        _decrease_height(node->left());
-        _decrease_height(node->right());
     }
 };
 
@@ -272,6 +367,7 @@ private:
     Node *_right{};
     unsigned _size = 1;
     unsigned _height = 0;
+    unsigned _bf = 0;
     TKey _key;
     TValue _value;
 
@@ -297,15 +393,19 @@ public:
     unsigned get_height() const { return _height; };
 
     void print_key() {
-        std::cout << get_key() << " ";
+        std::cout << _key << " ";
     }
 
     void print_value() {
-        std::cout << get_value() << " ";
+        std::cout << _value << " ";
+    }
+
+    void print_bf() {
+        std::cout << _bf << " ";
     }
 
     void print_height() {
-        std::cout << get_height() << " ";
+        std::cout << _height << " ";
     }
 
     Node *parent() const {
@@ -323,90 +423,44 @@ public:
     friend class LinkedBinaryTree<TKey, TValue>;
 };
 
+std::vector<int> read() {
+    std::vector<int> myVector;
+    std::string line;
+    int value;
+
+    // Read a line to get the value
+    if (std::getline(std::cin, line)) {
+        std::istringstream iss(line);
+        if (iss >> value) {
+            // Use a for loop to read and append values
+            for (int i = 0; i < value; i++) {
+                int inputValue;
+                if (std::cin >> inputValue) {
+                    myVector.push_back(inputValue);
+                }
+            }
+        }
+    }
+    return myVector;
+}
+
 int main() {
-    std::vector<int> items = {50, 20, 75, 10, 40, 60, 80, 15, 55, 65, 100, 120};
+//    std::vector<int> items = {50, 20, 75, 10, 40, 60, 80, 15, 55, 65, 100, 120};
     LinkedBinaryTree<int, int> T;
+    std::vector<int> items = read();
     for (const auto &i: items) {
         T.insert(i);
     }
 
-    T.print_plot_string(&Node<int, int>::print_key);
-
-    std::cout << "Pre-order:\n";
     for (const auto &x: T.get_preorder()) {
         std::cout << x << ' ';
     }
     std::cout << std::endl;
-    std::cout << "In-order:\n";
-    for (const auto &x: T.get_inorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
-    std::cout << "Post-order:\n";
-    for (const auto &x: T.get_postorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
-    std::cout << "Max = " << T.max()->get_key() << std::endl;
-    std::cout << "Min = " << T.min()->get_key() << std::endl;
-
-    std::cout << "Removing 65\n";
-    T.remove(65);
-    T.print_plot_string(&Node<int, int>::print_key);
-    std::cout << "Pre-order:\n";
-    for (const auto &x: T.get_preorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-    std::cout << "In-order:\n";
-    for (const auto &x: T.get_inorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
-    std::cout << "Post-order:\n";
-    for (const auto &x: T.get_postorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
-    std::cout << "Removing 80\n";
-    T.remove(80);
-    T.print_plot_string(&Node<int, int>::print_key);
-    std::cout << "Pre-order:\n";
-    for (const auto &x: T.get_preorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-    std::cout << "In-order:\n";
-    for (const auto &x: T.get_inorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
-    std::cout << "Post-order:\n";
-    for (const auto &x: T.get_postorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-
-    std::cout << "Removing 75\n";
-    T.remove(75);
-    T.print_plot_string(&Node<int, int>::print_key);
-    std::cout << "Pre-order:\n";
-    for (const auto &x: T.get_preorder()) {
-        std::cout << x << ' ';
-    }
-    std::cout << std::endl;
-    std::cout << "In-order:\n";
     for (const auto &x: T.get_inorder()) {
         std::cout << x << ' ';
     }
 
     std::cout << std::endl;
-    std::cout << "Post-order:\n";
     for (const auto &x: T.get_postorder()) {
         std::cout << x << ' ';
     }

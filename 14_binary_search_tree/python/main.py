@@ -1,4 +1,7 @@
+import time
+
 import matplotlib.pyplot as plt
+from matplotlib import image as mpimg
 
 
 # Helper class to represent a node in the tree
@@ -14,7 +17,7 @@ def parse_bfs_string(bfs_string):
     values = bfs_string.split()
     if not values:
         return None
-    root = TreeNode(int(values[0]))
+    root = TreeNode(values[0])
     queue = [root]
     i = 1
     while i < len(values):
@@ -76,15 +79,30 @@ def plot_binary_tree(bfs_string):
             x1, y1 = coordinates[node]
             x2, y2 = coordinates[node.right]
             ax.plot([x1, x2], [y1, y2], 'b-')
+
     ax.axis('off')
+
+    watermark_image = mpimg.imread('logo.png')
+    image_height, image_width = watermark_image.shape[:2]
+    plot_width, plot_height = fig.get_size_inches()
+    position_x = -0.15 * (plot_width - image_width)  # Center the watermark horizontally
+    fig.figimage(watermark_image, xo=position_x, yo=1, alpha=0.2, zorder=-3)
+
+    plt.tight_layout()
+
     plt.show()
 
 
 # Example BFS string
 trees = [
-    "11 1 28 # # 23 33 # # # # # 26 # 81 # # # # # # # # # # # # # # 48 91 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 47 61 # 96 ",
-    "0 1 1 # # 2 2 # # # # # 3 # 3 # # # # # # # # # # # # # # 4 4 # # # # # # # # # # # # # # # # # # # # # # # # # # # # 5 5  # 5 ",
-]
-
+    "6 ",
+    "6 5 # # ",
+    "5 -2 6 # # # # ",
+    "5 -2 6 # # # 7 # # # # # # # # # # ",
+    "5 -2 6 # -1 # 7 # # # # # # # # # # # # ",
+    "5 -1 6 -2 0 # 7 # # # # # # # # # # # # # # # # # # ",
+    "5 -1 6 -2 0 6 7 # # # # # # # # # # # # # # # # # # # # # # # # ",
+    "5 -1 6 -2 0 6 7 # # # # # # # # # # # # # # # # # # # # # # # # ", ]
 for tree in trees:
     plot_binary_tree(tree)
+    time.sleep(2)
