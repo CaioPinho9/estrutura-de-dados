@@ -217,7 +217,7 @@ private:
                 pivot->_left->_bf = 0;
             } else if (pivot->_bf == +1) {
                 pivot->_right->_bf = 0;
-                pivot->_left->_bf = 1;
+                pivot->_left->_bf = -1;
             } else {
                 pivot->_right->_bf = pivot->_left->_bf = 0;
             }
